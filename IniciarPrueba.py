@@ -11,8 +11,9 @@ aux=time.time()
 import function
 import numpy as np
 from sklearn.model_selection import GridSearchCV
-import Controlar
+#import Controlar
 import os
+import xlsxwriter
 #############################################################PROGRAMA PRINCIPAL#############################################################
 Time=[]
 Value=[]
@@ -20,17 +21,22 @@ GolpesClasificados=[]
 resposta=123123
 hits_database=[[]]
 aux=time.time()-aux
+
+#Inicializa todos los archivos(para permitirnos hacer un append) y pide un inicio de sesión
+#devolviendo un False si el usuario sigue en modo anónimo
 sesion=function.iniciar(hits_database)
 aux2=time.time()
 
-Controlador=Controlar.Controller()
+#Controlador=Controlar.Controller()
 
 if sesion is not False:
+    #Leemos su .json para saber que golpes tiene en la base de datos y enseñar solo eses en el modo práctica
     GolpesClasificados.extend(function.cargarperfil(sesion))
 aux2=time.time()-aux2
 print(aux+aux2)
 
 while resposta!=0:
+    #Le pasamos la sesion porque si es un usuario anonimo no puede acceder al menu completo.
     resposta=function.menu(sesion)
 
     if int(resposta) is 1:
@@ -41,9 +47,9 @@ while resposta!=0:
         forza=[[]]
         tempos=[[]]
         calidade=[]
-        repetir = True
+        repetir = True 
         while repetir:
-            Controlador.main()
+            #Controlador.main()
             auxy=function.readJSONS()
             FinalValues=auxy[1]
             FinalTimes=auxy[0]
@@ -62,11 +68,6 @@ while resposta!=0:
         function.escribirJSON(abreviatura,sesion,tempos=tempos,forza=forza,calidade=calidade)#opens "temporal.json" if there is no sesion
     #forza and calidade are optional values so we need to indicate what "forza" is.Its confusing in this case cause they have the same name
 
-    elif int(resposta) is 123:
-
-        while int(input("1 para pegar,2 para salir")) is not 2:
-            Controlador.main()
-
     elif int(resposta) is 2:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
@@ -77,7 +78,7 @@ while resposta!=0:
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
         repetir = True
         while repetir:
-           Controlador.main()
+           #Controlador.main()
            forza=function.readJSONS()[1]
            print(forza)
            clf_prove=function.getfromhits_database(hits_database,hitname,"clf")
@@ -122,11 +123,15 @@ while resposta!=0:
            function.escribirJSON(str(time.gmtime(time.time())[3]+2)+"-"+str(time.gmtime(time.time())[4]),"historial",string="Nombre:"+hitname[:-4]+"\n\t\t\tPotencia:"+str(pot)+"\n\t\t\tCalificacion:\""+str(etiqueta)+"\"")
 
     elif int(resposta) is 3:
+        #Enseñamos el historial de golpes del runtime
         function.verhistorial()
 
     elif int(resposta) is 4:
-         FinalValues=function.readJSONS()[1]
-         print(FinalValues)
+        #Se crean <nombreusuario>_<nombregolpe>.xlsx en el path indicado
+        # en "constant.py" que contiene el vector de cada golpe así como su etiqueta y potencia
+
+
+        function.getexcel(sesion + ".json")
 
     elif int(resposta) is 5:
         index_golpe = False#One index to get the hit from GolpesClasificados(abrev already)
@@ -149,13 +154,18 @@ while resposta!=0:
         if int(index_golpe) is -1 or 0:   #Function return -1 if the list is empty,0 if they want to go "atras"
            continue
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
-        #function.pintarvectoresTSNE(sesion,hitname)
-        sel_atrib=function.getfromhits_database(hits_database,hitname,"sel_atrib")
-        if str(sel_atrib) == "NULL":
-            print("Non hai clf con transformador para eliminar overfitting")
-            print(hits_database)
+        decide=function.eleccion("Con ou Sin overfitting?\n\t1)Sin Overfitting\n\t2)Con Overfitting",2,False)
+        if int(decide) is 2:
+            print("Decidido con overfitting")
+            function.pintarvectoresTSNE(sesion,hitname)
         else:
-            function.pintarvectoresTSNE(sesion,hitname,sel_atrib)
+            print("Decidido sin overfitting")
+            sel_atrib=function.getfromhits_database(hits_database,hitname,"sel_atrib")
+            if str(sel_atrib) == "NULL":
+                print("Non hai clf con transformador para eliminar overfitting")
+                print(hits_database)
+            else:
+                function.pintarvectoresTSNE(sesion,hitname,sel_atrib)
 
     elif int(resposta) is 7:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)

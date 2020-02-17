@@ -22,19 +22,21 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
 
-"""import pandas as pd
+import xlsxwriter
+import pandas as pd
 import seaborn as sn
 import plotly.plotly as py
 from sklearn.manifold import t_sne
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import cython
-"""
+
 
 
 
 #Simple method to log in
 def iniciosesion():
+        
         resposta=input("Escriba o seu nome de Usuario")
         try:
             with open (constant.PATH+str(resposta)+".json","r") as file:
@@ -48,6 +50,10 @@ def iniciosesion():
 
 #Prepare all the arquives we will need.Thanks to this method we will be able to use 'a' all time
 def iniciar(clf_database):
+
+    """
+        Un metodo simple que inicia o que necesitamos nos arquivos
+    """
     i=0
     while i < len(constant.GOLPES):
         if i is 0:
@@ -59,7 +65,7 @@ def iniciar(clf_database):
     resposta=eleccion("Desexa iniciar sesion?\n\t\t1)Si\n\t\t2)No",2,False)
     if int(resposta) is 1:
         resposta=iniciosesion()
-    else:
+    else: 
         print("Continuara en modo anonimo")
         resposta=False
     try:
@@ -75,16 +81,23 @@ def iniciar(clf_database):
 
 #Prints the menu,this code could have been in the main .py
 def menu(sesion):
+    """
+    Pinta o menu principal,que cambia dependendo da sesion
+    """
     if sesion is False:#No log in
         try:
-            resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion\n\t4)Probar lectura dos JSONS\n\t5)Iniciar Sesion\n\t6)Pintar vectores\n\t7)Probar cousas random \n\t0)Sair"))
+            resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion"
+                               "\n\t4)Sacar Excel da base de datos\n\t5)Iniciar Sesion\n\t6)Pintar vectores"
+                               "\n\t7)Probar cousas random \n\t0)Sair"))
             if resposta is 5:
                 resposta = 15
         except:
             resposta=int(31239)
     else:
         try:
-            resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion\n\t4)Probar lectura dos JSONS\n\t5)Probar Clasificadores\n\t6)Pintar vectores\n\t7)Probar cousas random \n\t0)Sair"))
+            resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion"
+                               "\n\t4)Sacar Excel da base de datos\n\t5)Probar Clasificadores\n\t6)Pintar vectores"
+                               "\n\t7)Probar cousas random \n\t0)Sair"))
         except:
             resposta=int(31239)
     return resposta
@@ -92,6 +105,9 @@ def menu(sesion):
 
 #Simple method to show the historial of the sesion
 def verhistorial():
+     """
+     Metodo sinxelo que ensina o historial por pantalla
+     """
      try:
        with open(constant.PATH+"historial.json","r") as file:
          contido=file.read()
@@ -119,6 +135,9 @@ def verhistorial():
 
 #Show all the hits we have in constant.py
 def mostrar_golpes():#Ensenha os golpes nada mais
+    """
+    Ensina os golpes por pantalla, nada espectacular
+    """
     print("Escolla un dos seguintes golpes")
     j=0
     while j < len(constant.GOLPES):
@@ -128,6 +147,9 @@ def mostrar_golpes():#Ensenha os golpes nada mais
 
 #Show all the directions we have in constant.py
 def mostrar_direccions():
+    """
+    Xusto eso e o que fai, bastante intuitivo loco.
+    """
     print("\nComo foi o golpe?")
     j=0
     while j < len(constant.DIRECCIONS):
@@ -164,21 +186,80 @@ def getfromhits_database(BD,hitname,nombre):
 
 #Get the power of the vector
 #NOTE:We wont use "sqrt" in order not to import "math"
-#ESTA MAL FEITA A POTENCIA,ESTAMOS FACENDO A SUMA DOS MODULOS E NON O MODULO DA SUMA.ESTAMOS CALCULANDO MAL ESO
+
 def potencia(vector):
+    """
+    HAI QUE MIRAR COMO CALCULA A PONTECIA
+    """
     nsba=int(len(vector)/3)#Number of samples by axis
     pacelerometro=[0]*9#we have 9 accelerometer
     i=0
     pot=0
     interaccion=0
+    eje="X"
+    ejex=[0]*10
+    ejey=[0]*10
+    ejez=[0]*10
+    pot_ejex = 0
+    pot_ejey = 0
+    pot_ejez = 0
+    auxiliar=0
+    pot_acelerometo=[0]*9
     while i < len(vector):
-        tosqrt=0
-        while tosqrt < nsba:
-            pacelerometro[interaccion]=float(pacelerometro[interaccion])+float(vector[i+tosqrt])**2
-            tosqrt=tosqrt+1
-        pacelerometro[interaccion]=pacelerometro[interaccion]**0.5
-        interaccion=interaccion+1
-        i=i+nsba#we got now the index fo the first value of the accelerometer
+        if eje == "X":
+            ejex[auxiliar] = vector[i]
+            if auxiliar is 9:
+                pot_ejex = 0
+                k = 0
+                while k < 9:
+                    pot_ejex = pot_ejex + float(vector [i])**2
+                    k = k+1
+                pot_ejex = pot_ejex ** (1/2)
+                #Agora temos o modulo do eixe X
+                eje = "Y"
+                auxiliar = 0
+            else:
+                auxiliar = auxiliar+1
+        elif eje == "Y":
+            ejey[auxiliar] = vector [i]
+            if auxiliar is 9:
+                pot_ejey = 0
+                k = 0
+                while k < 9:
+                    pot_ejey = pot_ejey + float(vector [i])**2
+                    k = k+1
+                pot_ejey = pot_ejey ** (1/2)
+                #Agora temos o modulo do eixe X
+                eje = "Z"
+                auxiliar = 0
+            else:
+                auxiliar = auxiliar+1
+
+        elif eje == "Z":
+            ejez[auxiliar] = vector [i]
+            if auxiliar is 9:
+                pot_ejez = 0
+                k = 0
+                while k < 9:
+                    pot_ejez = pot_ejez + float(vector [i])**2
+                    k = k+1
+                pot_ejez = pot_ejez ** (1/2)
+                #Agora temos o modulo do eixe X
+                eje = "X"
+                auxiliar = 0
+                #agora vamos facer o modulo dos tres eixes. Temos a sorte de que son 30 mostras sempre asique xa sabemos
+                #o indice solo polo indice do vector que nos dan
+                pot_acelerometo[ int(((i+1)/30)-1) ] = ((pot_ejex**2) + (pot_ejey**2) + (pot_ejez**2))**(1/2)
+            else:
+                auxiliar = auxiliar+1
+
+        i = i+1
+    i = 0
+    resultado=0
+    while i < len(pot_acelerometo):
+        resultado = resultado + pot_acelerometo [i]
+        i = i + 1
+    return resultado
 
     #now we have all the pot of the accelerometers,so lets calculate the global
     i=0
@@ -186,6 +267,8 @@ def potencia(vector):
         pot=pot+pacelerometro[i]
         i=i+1
     return pot
+
+
 
 
 #This method will return the power average.The first one(when we log in) is calculated with the 10 last samples
@@ -244,6 +327,9 @@ def ultimosgolpes(sesion,hitname,etiqueta=''):
 
 #Give us one abreviature we will use in archives(more confortable)
 def abreviatura(golpe):
+    """
+    Danos unha abreviatura dos golpes, para non usar o nome completo todo o rato
+    """
     if " " in golpe:
         index=golpe.find(" ")
         abrev=golpe[0:3]+golpe[index+1:index+4]+"_clf"
@@ -254,6 +340,9 @@ def abreviatura(golpe):
 
 #Repeats the message until a valid number number is chosen,last parameter indicate if "0" is a valid number
 def eleccion(mensaxe,nparametros,haicero):
+    """
+    Repite a mensaxe ata que se selecciona un numero valido,o ultimo parametro indica se o "0" e valido
+    """
     valido=0
     while valido is 0:
         try:
@@ -271,6 +360,9 @@ def eleccion(mensaxe,nparametros,haicero):
 
 #Interactive menu to choose the hit+direction
 def seleccion_golpe():
+    """
+    Menu iteractivo para selecciona o golpe a direccion
+    """
     print("Escolla un golpe:")
     invalido = True
     while invalido:
@@ -289,6 +381,9 @@ def seleccion_golpe():
 
 #Return all the hits we have clasifies, 0 if the list is empty and False if an invalid number has been chosen
 def elexir_golpes_clasificados(GolpesClasificados,Ceromessage):
+    """
+    Devolve todos os golpes clasificados, 0 se esta vacio e False se seleccionamos algo invalido
+    """
     tamano=0
     print("-----------------------------------------")
     interaccion = 0
@@ -318,6 +413,9 @@ def elexir_golpes_clasificados(GolpesClasificados,Ceromessage):
 
 #Return all the abrevs are present in the sesion.json
 def cargarperfil(sesion):
+    """
+    Devolve todas as abreviatura para saber o que esta presente na sesion.json
+    """
     with open(constant.PATH+str(sesion)+".json","r") as file:
         index_palabra=0
         index_finpalabra=0
@@ -344,6 +442,10 @@ def cargarperfil(sesion):
 #Writes something in JSON format in the archive given."Abreviatura" is the "dad" of string,forza and calidade.
 #If u give "forza and calidade", then the "string"parameter does nothing.Forza and calidade are lists
 def escribirJSON(abreviatura,archivo,tempos='',forza='',calidade='',string=''):
+    """
+    Escribe algoen formato JSON no arquivo dado.Se o metodo recibe forza e calidade, pasa olimpicamente
+    do string
+    """
 #NOTE:We differenciate de abreviatures in all json by "_"so, dont write something with "_"
     if archivo is False:
         archivo="temporal.json"
@@ -385,6 +487,9 @@ def escribirJSON(abreviatura,archivo,tempos='',forza='',calidade='',string=''):
 
 #Simple loop which introduce the clf in the hits_database
 def insertinBD(BD,hitname,nombre,clf):
+    """
+    Un easy bucle que introduce o clasificator en hits_database
+    """
 
     if nombre == "clf":
         j=1
@@ -399,16 +504,22 @@ def insertinBD(BD,hitname,nombre,clf):
 
 #Change format to use in SVM
 def reshapecasero(vector):
-      aux=[]
-      i=0
-      while i < len(vector):
-          if type(vector[i]) is "string":
-              vector[i]=vector[i].strip()
-          aux.append(list(map(float,vector[i])))
-          i=i+1
-      return aux
+    """
+    Por algun motivo desconocido a mi persona o da libreria non funcionaba,asique fixen un propio.
+    """
+    aux=[]
+    i=0
+    while i < len(vector):
+        if type(vector[i]) is "string":
+            vector[i]=vector[i].strip()
+        aux.append(list(map(float,vector[i])))
+        i=i+1
+    return aux
 
 def copiar2Darray(vector):
+    """
+    Xusto ,devolve unha copia do array
+    """
     i=0
     aux=[[]]
     while i < len(vector):
@@ -422,6 +533,9 @@ def copiar2Darray(vector):
 
 #Convert 2D [][] from list to string
 def string2int2D(vector):
+    """
+    E basicamente un casteo
+    """
     i=0
     k=0
     while i < len(vector):
@@ -434,6 +548,9 @@ def string2int2D(vector):
 
 #Convert 2D [][] from list to float
 def string2float2D(vector):
+    """
+    Basicamente un casteo
+    """
     i=0
     k=0
     while i < len(vector):
@@ -446,117 +563,114 @@ def string2float2D(vector):
 
 #AQUI MAIS FUNCIONS DE CALIBRAR PORQUE QUEREMOS CHEGAR Ó 90%
 def calibrar(sesion,hitname,verresult):
-      warnings.filterwarnings("ignore", category=DeprecationWarning)
-      if sesion is False:
-                sesion="temporal"
-      simplefilter(action='ignore', category=FutureWarning)
-      scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
-      auxvect=valueandlabels(sesion+".json",hitname)[0]
-      #We will get now a list of randomindex to prove each tolerance(20% of samples)
-      values=auxvect[0:int(len(auxvect)/2)]
-      labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
-      linear = LinearSVC(max_iter=constant.MAXITER)
-      clf1 = SelectFromModel(linear.fit(values, labels), prefit=True)#O de prefit e para que nos deixe usar o SelectFromModel
-      new_values_linear = clf1.transform(values)
-      #ESTO PARA NON TRANSFORMAR NADAnew_values_linear=values
-      linear = LinearSVC(max_iter=constant.MAXITER)
-      #vale,agora temos en new_values todas as mostras de todos os golpes
-      #len(values)=60 porque temos 60 golpes almacenados
-      #LEN(VALUES[I]) e 135,pero o novo valor(que almacenaremos en new_values_linear por exemplo)estara reducido e sera 60(mas menos)
-      i=0
-      #10 years later i know how to do change the format
-      """k=[]
-      while i < len(new_values_linear):
-          k.append(list(map(float,new_values_linear[i])))
-          i=i+1
-      new_values_linear=k
-      """
-      new_values_linear=reshapecasero(new_values_linear)
-      #y_predict = cross_val_predict(linear, new_values, labels, cv=10)
-      scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
-      i=0
-      acerto=0
-      if verresult is True:
-          print("--------------------------CROSSVALIDATE--------------------------")
-          print("Datos de LinearSVC + SelectFromModel")
-          print("Fit time: " + str(sum(scores["fit_time"]) / 10))
-          print("Score time " + str(sum(scores["score_time"]) / 10))
-          print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
-          print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
-      i=0
-      k=[]
-      new_values_logistic=auxvect[0:int(len(auxvect)/2)]
-      while i < len(new_values_logistic):
-          k.append(list(map(float,new_values_linear[i])))
-          i=i+1
-      new_values_logistic=k
-      #ESTO ESTA BEN PERO PROBA TODO CON TODO,TEMOS QUE FACER(IGUAL COS CORCHETES) QUE NON PROBE TODOS OS VALORES CON TODOS PARA PODER USAR O SOLVER E MULTINOMIAL EN MULTICLASS
-      tuned_parameters=[{'C':[0.01,0.02,0.03,0.04,0.05,0.75,0.9,1.0],'penalty':["l1"],'multi_class':["ovr"]}]
-      logistic=GridSearchCV(LogisticRegression(),tuned_parameters)
-      scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
-      if verresult is True:
-          print("--------------------------CROSSVALIDATE--------------------------")
-          print("Datos de LogisticRegression + Grid Search")
-          print("Fit time: " + str(sum(scores["fit_time"]) / 10))
-          print("Score time " + str(sum(scores["score_time"]) / 10))
-          print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
-          print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
-          print("----------------------------------------------------------------")
+    
+    """
+    Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
+    """
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
+    if sesion is False:
+            sesion="temporal"
+    simplefilter(action='ignore', category=FutureWarning)
+    scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
+    auxvect=valueandlabels(sesion+".json",hitname)[0]
+    #We will get now a list of randomindex to prove each tolerance(20% of samples)
+    values=auxvect[0:int(len(auxvect)/2)]
+    labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
+    linear = LinearSVC(max_iter=constant.MAXITER)
 
-      resposta=int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search",3,False))
-      if verresult is True:
-          resp2=int(eleccion("Desexa probar empiricamente a precisión do clasificador?\n\t\t1)Si\n\t\t2)No",2,False))
-          overfit=int(eleccion("Desexa probar con ou sin overfittin?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
-      else:
-          resp2=2
-          overfit=1
-      #1-->Without overfit
-      if resposta is 1:
-           if overfit is 1:
-               if verresult is True:
-                   print("--------------Sin overfitting os resultados seran mellores--------------")
-               linear.fit(new_values_linear,labels)
-               if resp2 is 1:
-                   probarclf(new_values_linear,labels,linear)
-               return [linear,clf1] 
-           else:
-               if verresult is True:
-                   print("--------------Con overfitting esperanse peores resultados--------------")
-               linear.fit(values,labels)
-               if resp2 is 1:
-                   probarclf(values,labels,linear)
-               return [linear,"null"]
-      elif resposta is 2:
-          if overfit is 1:
-              if verresult is True:
-                  print("--------------Sin overfitting os resultados seran mellores--------------")
-              logistic.fit(new_values_logistic,labels)
-              if resp2 is 1:
-                  probarclf(new_values_logistic,labels,logistic)
-              return [logistic,tuned_parameters]
-          else:
-               if verresult is True:
-                   print("--------------Con overfitting esperanse peores resultados--------------")
-               logistic.fit(values,labels)
-               if resp2 is 1:
-                   probarclf(values,labels,logistic)
-               return [logistic,"null"]
+    clf1 = SelectFromModel(linear.fit(values, labels), prefit=True)
+    #O de prefit e para que nos deixe usar o SelectFromModel, xa que lle pasamos o clf directamente por parametros
+    new_values_linear = clf1.transform(values)
+    #new_values_linear=values
+
+    linear = LinearSVC(max_iter=constant.MAXITER)
+    #vale,agora temos en new_values todas as mostras de todos os golpes
+    #len(values)=60 porque temos 60 golpes almacenados
+    new_values_linear=reshapecasero(new_values_linear)
+    #y_predict = cross_val_predict(linear, new_values, labels, cv=10)
+    scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
+    i=0
+    acerto=0
+    if verresult is True:
+        print("--------------------------CROSSVALIDATE--------------------------")
+        print("Datos de LinearSVC + SelectFromModel")
+        print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+        print("Score time " + str(sum(scores["score_time"]) / 10))
+        print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+        print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+    i=0
+    k=[]
+
+    values=auxvect[0:int(len(auxvect)/2)]
+
+    #clf2 = SelectFromModel(LogisticRegression().fit(values,labels), prefit=True)
+    #new_values_logistic=clf2.transform(values)
+    new_values_logistic=values
+
+    while i < len(new_values_logistic):
+        k.append(list(map(float,new_values_logistic[i])))
+        i=i+1
+    new_values_logistic=k
+
+    #ESTO ESTA BEN PERO PROBA TODO CON TODO,TEMOS QUE FACER(IGUAL COS CORCHETES) QUE NON PROBE TODOS OS VALORES CON TODOS PARA PODER USAR O SOLVER E MULTINOMIAL EN MULTICLASS
+    tuned_parameters=[{'C':[0.01,0.02,0.03,0.04,0.05,0.75,0.9,1.0],
+                       'penalty':["l2","l1"],'multi_class':["ovr"],'class_weight':['balanced'],
+                       'solver':['liblinear']}]
+    logistic=GridSearchCV(LogisticRegression().fit(new_values_logistic,labels),tuned_parameters)
+    scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
+    if verresult is True:
+        print("--------------------------CROSSVALIDATE--------------------------")
+        print("Datos de LogisticRegression + Grid Search")
+        print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+        print("Score time " + str(sum(scores["score_time"]) / 10))
+        print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+        print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+        print("----------------------------------------------------------------")
+
+    resposta=int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search",3,False))
+    if verresult is True:
+        resp2=int(eleccion("Desexa probar empiricamente a precisión do clasificador?\n\t\t1)Si\n\t\t2)No",2,False))
+        overfit=int(eleccion("Desexa probar con ou sin overfittin?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
+    else:
+        resp2=2
+        overfit=1
+    #1-->Without overfit
+    if resposta is 1:
+        if overfit is 1:
+            if verresult is True:
+                print("--------------Sin overfitting os resultados seran mellores--------------")
+            linear.fit(new_values_linear,labels)
+            if resp2 is 1:
+                probarclf(new_values_linear,labels,linear)
+            return [linear,clf1] 
+        else:
+            if verresult is True:
+                print("--------------Con overfitting esperanse peores resultados--------------")
+            linear.fit(values,labels)
+            if resp2 is 1:
+                probarclf(values,labels,linear)
+            return [linear,"null"]
+    elif resposta is 2:
+        if overfit is 1:
+            if verresult is True:
+                print("--------------Sin overfitting os resultados seran mellores--------------")
+            logistic.fit(new_values_logistic,labels)
+            if resp2 is 1:
+                probarclf(new_values_logistic,labels,logistic)
+            return [logistic,clf2]
+        else:
+            if verresult is True:
+                print("--------------Con overfitting esperanse peores resultados--------------")
+            logistic.fit(new_values_logistic,labels)
+            if resp2 is 1:
+                probarclf(new_values_logistic,labels,logistic)
+            return [logistic,"null"]
 
 
-      #THIS CODE PLOTS THE RESULTS,ITS NOT USEFULL BECAUSE THE SAMPLES ARE OVERLAPPING EACH OTHER
-      #fig, ax = plt.subplots()
-      #ax.scatter(labels, y_predict, edgecolors=(0, 0, 0))
-      #ax.plot([min(labels), max(labels)], [min(labels), max(labels)], 'k--', lw=4)
-      #ax.set_xlabel('Measured')
-      #ax.set_ylabel('Predicted')
-      #fig.show()
-
-      #print(y_predict.scores())
-
-      #return clfdatacerts
-
-#clf has a default tolerance, but sometimes its not the correct one.So, we have this method in order to fin the tolerance that minimise the error
 def probarclf(valuesparam,labelsparam,clf):
+      """
+      Crossvalidation manual que ten informacion mais interesante.
+      """
       vtp=[]#values to prove
       ltp=[]#labels to prove
       stp=[]#Samples to proove
@@ -643,7 +757,7 @@ def probarclf(valuesparam,labelsparam,clf):
           realizaciondereita=1
       if realizacionfrontal is 0:
           realizacionfrontal=1
-      print("Deronse "+str(realizaciondereita)+" golpes bos, "+str(realizacionesquerda)+" golpes de esquerda e "+str(realizacionfrontal)+"golpes frontais")
+      print("Deronse "+str(realizaciondereita)+" golpes de dereita, "+str(realizacionesquerda)+" golpes de esquerda e "+str(realizacionfrontal)+"golpes frontais")
       print("Acertou "+str(acierto)+ " de "+str(realizaciondereita+realizacionesquerda+realizacionfrontal)+"-->"+str(float(100*acierto/(realizaciondereita+realizacionesquerda+realizacionfrontal)))+"%")
       print("Fallaronse o "+str(float(100*falloesquerda/realizacionesquerda))+"% dos golpes de esquerda dados")
       print("Fallaronse o "+str(float(100*fallodereita/realizaciondereita))+"% dos golpes de dereita dados")
@@ -651,10 +765,14 @@ def probarclf(valuesparam,labelsparam,clf):
       print("O "+str(float(100*esquerdapredecido/(fallodereita+fallofrontal+falloesquerda)))+"% dos fallos foi por predecir esquerda sin selo")
       print("O "+str(float(100*dereitapredecido/(fallodereita+fallofrontal+falloesquerda)))+"% dos fallos foi por predecir dereita sin selo")
       print("O "+str(float(100*frontalpredecido/(fallodereita+fallofrontal+falloesquerda)))+"% dos fallos foi por predecir frontal sin selo")
-
+      print(len(valuesparam[0]))
 
 #Get all the values and labels from the specific hitname present in sesion.json
 def valueandlabels(sesion,hitname,tempo=''):
+        """
+        Colle os valores e etiquetas da hitname especifico na sesion especifica e 
+        devolve un array bidimensional [valores,tempos]
+        """
         with open(constant.PATH+sesion) as temporal_file:
              #We will take the needed vectors(although they will be strings)
                 contido=temporal_file.read()#we need to use read instead of readlines in order to use "find" after that
@@ -712,6 +830,9 @@ def valueandlabels(sesion,hitname,tempo=''):
 
 #Return the value
 def leerhistorial(hitname,etiqueta=''):
+    """
+    ESTO HAI QUE VER QUE FAI...LOL
+    """
     final_vector_power=[]
     with open (constant.PATH+"historial.json") as file:
         contido=file.read()
@@ -752,134 +873,149 @@ def leerhistorial(hitname,etiqueta=''):
 
 #Create and return the clasifier about the hitname thanks to the information given by "valuesandlabels"
 def createclf(sesion,hitname,tolerance):
-     if sesion is False:
-            sesion="temporal.json"
-     else:
-            sesion=str(sesion)+".json"
-     #Now we have the vectors que want to have,lets make the clasiffier(less tab cause we dont need the archive anymore)
-     aux=valueandlabels(sesion,hitname)[0]
-     values=aux[0:int(len(aux)/2)]
-     labels=aux[int(len(aux)/2):int(len(aux))]
-     clf=LinearSVC(max_iter=constant.MAXITER,random_state=constant.RANDOM_STATE,tol=tolerance)
-     clf.fit(values,labels)
-     return clf
+    """
+    Esto en realidade non sei onde se usa pero creo que non se usa demasiado(por non decir nada)
+    """
+    if sesion is False:
+        sesion="temporal.json"
+    else:
+        sesion=str(sesion)+".json"
+    #Now we have the vectors que want to have,lets make the clasiffier(less tab cause we dont need the archive anymore)
+    aux=valueandlabels(sesion,hitname)[0]
+    values=aux[0:int(len(aux)/2)]
+    labels=aux[int(len(aux)/2):int(len(aux))]
+    clf=LinearSVC(max_iter=constant.MAXITER,random_state=constant.RANDOM_STATE,tol=tolerance)
+    clf.fit(values,labels)
+    return clf
 
 
-#Read the JSONS we got from the hit,its a loop that send all arquives to "leer_arquivo".Take all values and return the important ones(reduces by "reduce")
+#Read the JSONS we got from the hit,its a loop that send all arquives to "leer_arquivo".
+# Take all values and return the important ones(reduces by "reduce")
 def readJSONS() :
-        time_now= time.time()#JSONS will be overwritten al time and we just need the last value
-        i=0
-        cambio= True
-        j=30###########################################################ARCHIVE NAME###########################################################
-        #WE HAVE "REPETITIVE" NAMES so we can use a loop to read all the archives
-        Time=[]
-        Value=[]
-        while i < constant.NJSONS:
-            name="P8_"+str(j)+".json"
-            Archive_data=leer_arquivo(constant.PATH+name,time_now)
-            Time.extend(Archive_data[:int((len(Archive_data)/2))])
-            Value.extend(Archive_data[int((len(Archive_data)/2)):])
-            i=i+1
-            if cambio:
-                cambio= False
-                j=j+1
-            else :
-                cambio= True
-                j=j+3
+    """
+    Lee os JSONS do ultimo golpe e devole un vector bidimensional([Valores,tempo]) resultado de aplicarlle
+    o filtrado correspondente.
+    O DO FILTRADO CREO QUE HAI QUE CAMBIALO DE SITIO PARA GARDAR SEMPRE TODOS OS DATOS E FILTRAR CANDO NOS APETEZA
+    """
+    time_now= time.time()#JSONS will be overwritten al time and we just need the last value
+    i=0
+    cambio= True
+    j=30###########################################################ARCHIVE NAME###########################################################
+    #WE HAVE "REPETITIVE" NAMES so we can use a loop to read all the archives
+    Time=[]
+    Value=[]
+    while i < constant.NJSONS:
+        name="P8_"+str(j)+".json"
+        Archive_data=leer_arquivo(constant.PATH+name,time_now)
+        Time.extend(Archive_data[:int((len(Archive_data)/2))])
+        Value.extend(Archive_data[int((len(Archive_data)/2)):])
+        i=i+1
+        if cambio:
+            cambio= False
+            j=j+1
+        else :
+            cambio= True
+            j=j+3
 
-        if constant.TIPOFILTRO == "normal":
-            FinalTimes=reduce(Time,Value)
-        elif constant.TIPOFILTRO == "deletevibration":
-            FinalTimes=reducedelvibr(Time,Value)
-        elif constant.TIPOFILTRO == "reducepot":
-            FinalTimes=reducepot(Time,Value)
-        elif constant.TIPOFILTRO == "nada":
-            return [Time,Value]
-        FinalValues=[]
-        i=0
-        tam=len(FinalTimes)/2#we need to do that cause len changes with pop
-        while i < tam :
-            FinalValues.append(FinalTimes.pop())
-            i=i+1
-        FinalValues.reverse()
-          #WE HAVE THE TIME VALUES FILTERED HERE, I THINK I DONT REALLY NEED IT SO I WONT RETURN THEM, BUT THEY ARE HERE IF SOMEONE NEEDS IT SOMEDAY
+    if constant.TIPOFILTRO == "normal":
+        FinalTimes=reduce(Time,Value)
+    elif constant.TIPOFILTRO == "deletevibration":
+        print("Eliminando a vibración...")
+        FinalTimes=reducedelvibr(Time,Value)
+    elif constant.TIPOFILTRO == "reducepot":
+        FinalTimes=reducepot(Time,Value)
+    elif constant.TIPOFILTRO == "nada":
+        return [Time,Value]
+    FinalValues=[]
+    i=0
+    tam=len(FinalTimes)/2#we need to do that cause len changes with pop
+    while i < tam :
+        FinalValues.append(FinalTimes.pop())
+        i=i+1
+    FinalValues.reverse()
+        #WE HAVE THE TIME VALUES FILTERED HERE, I THINK I DONT REALLY NEED IT SO I WONT RETURN THEM, BUT THEY ARE HERE IF SOMEONE NEEDS IT SOMEDAY
+    return [FinalValues,FinalTimes]
 
-        return [FinalValues,FinalTimes]
 
-
-#It Reads one json and gets all times/values,then returns the vector chronological nearest(values+times) thanks to "masreciente"
+#It Reads one json and gets all times/values,then returns the vector chronological nearest(values+times) 
+# thanks to "masreciente"
 def leer_arquivo(path,time_now):
-        result_value=[]
-        auxvector=[]
-        with open(path) as file_object:
-            contents = file_object.read()
+    """
+    Lee un json e devolve o valor mais reciente
+    """
+    result_value=[]
+    auxvector=[]
+    with open(path) as file_object:
+        contents = file_object.read()
     #We are going to isolate the information que really want from the JSON
-        X_index=contents.find("\"axis_x\": {")+len("\"axis_x\": {")
-        Xtime_index=contents.find("\"times\": [",X_index)+len("\"times\": [")
-        Xtime_indexfin=contents.find("]",Xtime_index)
-        Xvalue_index=contents.find("\"values\": [",X_index)+len("\"values\": [")
-        Xvalue_indexfin=contents.find("]",Xvalue_index)
-        Xtime=contents[Xtime_index:Xtime_indexfin].split(",")
-        Xvalue=contents[Xvalue_index:Xvalue_indexfin].split(",")
+    X_index=contents.find("\"axis_x\": {")+len("\"axis_x\": {")
+    Xtime_index=contents.find("\"times\": [",X_index)+len("\"times\": [")
+    Xtime_indexfin=contents.find("]",Xtime_index)
+    Xvalue_index=contents.find("\"values\": [",X_index)+len("\"values\": [")
+    Xvalue_indexfin=contents.find("]",Xvalue_index)
+    Xtime=contents[Xtime_index:Xtime_indexfin].split(",")
+    Xvalue=contents[Xvalue_index:Xvalue_indexfin].split(",")
 
-        Y_index=contents.find("\"axis_y\": {")+len("\"axis_y\": {")
-        Ytime_index=contents.find("\"times\": [",Y_index)+len("\"times\": [")
-        Ytime_indexfin=contents.find("]",Ytime_index)
-        Yvalue_index=contents.find("\"values\": [",Y_index)+len("\"values\": [")
-        Yvalue_indexfin=contents.find("]",Yvalue_index)
-        Ytime=contents[Ytime_index:Ytime_indexfin].split(",")
-        Yvalue=contents[Yvalue_index:Yvalue_indexfin].split(",")
+    Y_index=contents.find("\"axis_y\": {")+len("\"axis_y\": {")
+    Ytime_index=contents.find("\"times\": [",Y_index)+len("\"times\": [")
+    Ytime_indexfin=contents.find("]",Ytime_index)
+    Yvalue_index=contents.find("\"values\": [",Y_index)+len("\"values\": [")
+    Yvalue_indexfin=contents.find("]",Yvalue_index)
+    Ytime=contents[Ytime_index:Ytime_indexfin].split(",")
+    Yvalue=contents[Yvalue_index:Yvalue_indexfin].split(",")
 
-        Z_index=contents.find("\"axis_z\": {")+len("\"axis_z\": {")
-        Ztime_index=contents.find("\"times\": [",Z_index)+len("\"times\": [")
-        Ztime_indexfin=contents.find("]",Ztime_index)
-        Zvalue_index=contents.find("\"values\": [",Z_index)+len("\"values\": [")
-        Zvalue_indexfin=contents.find("]",Zvalue_index)
-        Ztime=contents[Ztime_index:Ztime_indexfin].split(",")
-        Zvalue=contents[Zvalue_index:Zvalue_indexfin].split(",")
-        #Se se pegan 3 golpes teremos moitos vectores, coas funcions de abaixo collemos o ultimo golpe
-        Xvector=masreciente(Xtime,Xvalue,time_now)
-        Yvector=masreciente(Ytime,Yvalue,time_now)
-        Zvector=masreciente(Ztime,Zvalue,time_now)
+    Z_index=contents.find("\"axis_z\": {")+len("\"axis_z\": {")
+    Ztime_index=contents.find("\"times\": [",Z_index)+len("\"times\": [")
+    Ztime_indexfin=contents.find("]",Ztime_index)
+    Zvalue_index=contents.find("\"values\": [",Z_index)+len("\"values\": [")
+    Zvalue_indexfin=contents.find("]",Zvalue_index)
+    Ztime=contents[Ztime_index:Ztime_indexfin].split(",")
+    Zvalue=contents[Zvalue_index:Zvalue_indexfin].split(",")
+    #Se se pegan 3 golpes teremos moitos vectores, coas funcions de abaixo collemos o ultimo golpe
+    Xvector=masreciente(Xtime,Xvalue,time_now)
+    Yvector=masreciente(Ytime,Yvalue,time_now)
+    Zvector=masreciente(Ztime,Zvalue,time_now)
+    #Aqui o que facemos e concatenar os valores X,Y,Z
+    try:
+        i=len(Xvector)
+    except:
+        raise Exception("Non hai ningun valor nos JSONS")
+    middle=i/2
+    while i > middle: #The values are the just the half part
+        auxvector.append(Xvector.pop())
+        i=i-1
+    auxvector.reverse()
+    result_value=result_value+auxvector
+    del auxvector[:]
 
-        #Aqui o que facemos e concatenar os valores X,Y,Z
-        try:
-            i=len(Xvector)
-        except:
-            raise Exception("Non hai ningun valor nos JSONS")
-        middle=i/2
-        while i > middle: #The values are the just the half part
-            auxvector.append(Xvector.pop())
-            i=i-1
-        auxvector.reverse()
-        result_value=result_value+auxvector
-        del auxvector[:]
+    i=len(Yvector)
+    middle=i/2
+    while i > middle: #The values are the just the half part
+        auxvector.append(Yvector.pop())
+        i=i-1
+    auxvector.reverse()
+    result_value=result_value+auxvector
+    del auxvector[:]
 
-        i=len(Yvector)
-        middle=i/2
-        while i > middle: #The values are the just the half part
-            auxvector.append(Yvector.pop())
-            i=i-1
-        auxvector.reverse()
-        result_value=result_value+auxvector
-        del auxvector[:]
+    i=len(Zvector)
+    middle=i/2
+    while i > middle: #The values are the just the half part
+        auxvector.append(Zvector.pop())
+        i=i-1
+    auxvector.reverse()
+    result_value=result_value+auxvector
+    del auxvector[:]
 
-        i=len(Zvector)
-        middle=i/2
-        while i > middle: #The values are the just the half part
-            auxvector.append(Zvector.pop())
-            i=i-1
-        auxvector.reverse()
-        result_value=result_value+auxvector
-        del auxvector[:]
-
-        result_time=Xvector+Yvector+Zvector#Nos vectores solo se quedou o tempo
-        result_total= result_time+result_value
-        return result_total
+    result_time=Xvector+Yvector+Zvector#Nos vectores solo se quedou o tempo
+    result_total= result_time+result_value
+    return result_total
 
 
 #Receive all time/value vector and return the vector that corresponds to the chronological nearest hit
 def masreciente(time_vector,value_vector,time_now):
+    """
+    Esto utilizao o readJSons
+    """
     result=[]
     i=0
     difference=1231231231
@@ -911,9 +1047,13 @@ def masreciente(time_vector,value_vector,time_now):
     return result
 
 
-#Receive the time/value vector which have all samples from all axis from all json.So we have here(if u didnt change my constnat.py) 10*3*9=270 samples
-#We reduce both vectors to 135 samples and return them together as a new 270vector(135time+135value)
-def reduce(Time,Value):
+# Receive the time/value vector which have all samples from all axis from all json.
+# So we have here(if u didnt change my constnat.py) 10*3*9=270 samples
+# We reduce both vectors to 135 samples and return them together as a new 270vector(135time+135value)
+def reduce(Time, Value):
+    """
+    Este metodo e o utilizado para aplicar o filtro "normal"
+    """
     min_index=Time.index(min(Time))
     #There is no order among individual vectors but "inside" each one we have chronological order, so, there is no reason
     #to fin the "start" of the individual vector,because it's "min_index"
@@ -957,6 +1097,11 @@ def reduce(Time,Value):
 
 #Using TSNE we wanna know if the vectors are distinguishable
 def pintarvectoresTSNE(sesion,hitname,sel_atrib=''):
+    """
+    Ensina graficas 2D para ver se os vectores son distinguibles.O resultado e unha proyeccion dun 
+    vector multidimensional(sobre 200 dim). Que se distingan a simple vista os puntos quere decir que a IA
+    debería distinguilos,pero ainda que nos non os distingamos a IA poderia ser capaz.
+    """
     auxvect=valueandlabels(sesion+".json",hitname)[0]
     values=auxvect[0:int(len(auxvect)/2)]
     labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
@@ -966,6 +1111,8 @@ def pintarvectoresTSNE(sesion,hitname,sel_atrib=''):
             print("Eliminando o overfitting...")
         except:
             print("O selector de atributos que pasou e invalido")
+    print(values)
+    print((len(values[0])))
     model=TSNE(learning_rate=100)
     tsne_data=model.fit_transform(values)
     xs=tsne_data[:,0]
@@ -986,58 +1133,13 @@ def pintarvectoresTSNE(sesion,hitname,sel_atrib=''):
     plt.show()
 
 
-#This function is not working yet
-def pintarvectoresPCA(sesion,hitname):
-    auxvect=valueandlabels(sesion+".json",hitname)[0]
-    X=auxvect[0:int(len(auxvect)/2)]
-    y=auxvect[int(len(auxvect)/2):int(len(auxvect))]
-
-
-    """x=np.array(values)
-    pca=PCA(n_components=15)
-    pca.fit(x)
-    print(pca.explained_variance_ratio_)
-    print(pca.singular_values_)
-    """
-
-    data = []
-
-    legend = {0: False, 1: False, 2: False, 3: True}
-
-    colors = {'Iris-setosa': '#0D76BF',
-              'Iris-versicolor': '#00cc96',
-              'Iris-virginica': '#EF553B'}
-
-    for col in range(4):
-        for key in colors:
-            trace = dict(
-                type='histogram',
-                x=list(X[y == key, col]),
-                opacity=0.75,
-                xaxis='x%s' % (col + 1),
-                marker=dict(color=colors[key]),
-                name=key,
-                showlegend=legend[col]
-            )
-            data.append(trace)
-
-    layout = dict(
-        barmode='overlay',
-        xaxis=dict(domain=[0, 0.25], title='sepal length (cm)'),
-        xaxis2=dict(domain=[0.3, 0.5], title='sepal width (cm)'),
-        xaxis3=dict(domain=[0.55, 0.75], title='petal length (cm)'),
-        xaxis4=dict(domain=[0.8, 1], title='petal width (cm)'),
-        yaxis=dict(title='count'),
-        title='Distribution of the different Iris flower features'
-    )
-
-    fig = dict(data=data, layout=layout)
-    py.iplot(fig, filename='exploratory-vis-histogram')
-
 #A miña idea basicamente é que o acelerometro vibra dentro,enton non sabemos nunca hacia onde vai
 #Para suplir esto, vou ver se hai máis valores positivos que negativos nas 5 mostras que collemos
 #Se hai mais do tipo X, poñemos o tipo Y a cero e viceversa,desta forma intentaremos "eliminar a vibracion"
 def cambiarjsons(sesion,hitname,novoarquivo,tipo):
+    """
+    Esto non sei se son eu ou está deprecated
+    """
     if tipo == "muestrascero":
         acabado = True
     else:
@@ -1107,6 +1209,9 @@ def cambiarjsons(sesion,hitname,novoarquivo,tipo):
     print(eliminarejes(vectorfinal[0],"z"))
 
 def eliminarejes(vectorfinal,eje):
+    """
+    Esto utilizao unha funcion que non chamo en ningun sitio
+    """
     j=0
     if eje == "x":
         k=0
@@ -1160,6 +1265,9 @@ def eliminarejes(vectorfinal,eje):
     #Agora temos o que hai que eliminar,solo necesitamos
 
 def cambiaramaximo(sesion,hitname,novoarquivo):
+    """
+    Esta funcion tampouco se chama dende ningun sitio, deben ser escombros de un filtro pasado
+    """
     auxvect = valueandlabels(sesion + ".json", hitname)[0]
     values = auxvect[0:int(len(auxvect) / 2)]
     labels = auxvect[int(len(auxvect) / 2):int(len(auxvect))]
@@ -1227,12 +1335,14 @@ def cambiaramaximo(sesion,hitname,novoarquivo):
                 #NOTA: AQUI HAI UNHA POSIBLE FONTE DE ERROR:2 VALORES MAXIMOS NO MESMO RANGO#
                 #############################################################################
         k=k+1
-
     escribirJSON(hitname, novoarquivo, forza=vectorfinal, calidade=labels)
 
 
 #Aqui vamos a ler o primeiro valor de cada eje,miramos o signo e colleremos solo as muestras que teñan ese signo.
 def reducedelvibr(tempos,values):
+    """
+    Filtro que intenta reducir a posible calibracion do acelerómetro dentro
+    """
     #A lectura dos acelerómetros e circular,primeiro leese unha meustra do eje X,despois Y,despois Z.Despois cambia
     #a outro acelerómetro.Fai este bucle 10 veces.
     #Como temos ordenados os vectores como MuestrasX,Y,Z--MuestrasX,Y,Z...Con coller o indice do menor valor, xa temos
@@ -1309,14 +1419,16 @@ def reducedelvibr(tempos,values):
                     else:
                         k=k+1
                         i=i+1
-
     return FinalTimesVector+FinalValuesVector
 
 
 #AQUI SIMPLEMENTE HABERIA QUE FACER UN REDUCEPOT E XA ESTARIA TODO
 def reducepot(tempos,values):
-    #A lectura dos acelerómetros e circular,primeiro leese unha meustra do eje X,despois Y,despois Z.Despois cambia
-    #a outro acelerómetro.Fai este bucle 10 veces.
+    """
+    Filtro que colle as muestras
+    """
+    #A lectura dos acelerómetros e circular,primeiro leese unha muestra do eje X,despois Y,despois Z.
+    # Despois cambia a outro acelerómetro.Fai este bucle 10 veces.
     #Como temos ordenados os vectores como MuestrasX,Y,Z--MuestrasX,Y,Z...Con coller o indice do menor valor, xa temos
     #automaticamente o indice do menor de cada eje
     tempos=string2float2D([tempos])
@@ -1397,3 +1509,38 @@ def reducepot(tempos,values):
                         i=i+1
 
     return FinalTimesVector+FinalValuesVector
+
+def getexcel(sesion):
+    """
+    Crea un excell cos datos
+    """
+
+    k = 0
+    while k < len(constant.GOLPES):
+        abrev = abreviatura(constant.GOLPES[k])
+        data = valueandlabels(sesion, abrev, True)
+        aux = data[0]
+        valores = aux[0:int(len(aux) / 2)]
+        etiquetas = aux[int(len(aux) / 2):]
+        tempos = data[1]
+        pot = [[]]
+        i = 0
+        while i < len(valores):
+            aux = potencia(valores[i])
+            if i is 0:
+                pot[0] = aux
+            else:
+                pot.append(aux)
+            i = i + 1
+        workbook = xlsxwriter.Workbook(str(sesion[:-5]) + "_" + str(constant.GOLPES[k]) +'.xlsx')
+        worksheet = workbook.add_worksheet()
+        worksheet.set_column('A:A', 10)
+        bold = workbook.add_format({'bold': True})
+        i = 0
+        while i < len(valores):
+            worksheet.write(i,0,str(valores[i]))
+            worksheet.write(i,1,str(etiquetas[i]))
+            worksheet.write(i,2,str(pot[i]))
+            i = i+1
+        workbook.close()
+        k = k+1

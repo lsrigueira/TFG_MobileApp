@@ -11,4 +11,4 @@ NSA_PW=10  #Numero de mostras coas que facemos a media de potencia
 DIMENSIONVIBRATION=5 #This parameter is the number of samples we are going to read in the maximum case(5 samples X axis)
 TIMELIMIT=0.1
 POTLIMIT=0.05
-TIPOFILTRO="nada"   #"nada","normal","deletevibration","reducepot"
+TIPOFILTRO = "nada"  # "nada","normal","deletevibration","reducepot"

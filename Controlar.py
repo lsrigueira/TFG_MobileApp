@@ -2,7 +2,7 @@
 ==============================================================================================================
 Controleverything.com- H3LIS331DL 3-Axis Linear Accelerometer I2C Mini Module
 A versatile motion-sensing system-in-a-chip
-
+ 
 3-Axis Accelerometer
 10,000 g High-Shock Survivability
 +/-100g/+/-200g/+/-400g Dynamically Selectable Scales
