@@ -4,6 +4,7 @@
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_predict
+from sklearn.feature_selection import SelectFromModel
 #from sklearn.manifold import TSNE
 import constant
 import time
@@ -72,7 +73,7 @@ while resposta!=0:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
             index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
-            #Atras is the message that appears in position "0"
+         #Atras is the message that appears in position "0"
         if int(index_golpe) is -1 or 0:#Function return -1 if the list is empty,0 if they want to go "atras"
             continue#Its a "break" for the "elif"
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
@@ -80,7 +81,7 @@ while resposta!=0:
         while repetir:
            #Controlador.main()
            forza=function.readJSONS()[1]
-           print(forza)
+           print(len(forza))
            clf_prove=function.getfromhits_database(hits_database,hitname,"clf")
            if str(clf_prove) == "NULL":
                print("Non hai rexistro de clasificador para este golpe.Escolla un")
@@ -92,18 +93,18 @@ while resposta!=0:
            else:
                clf_real=clf_prove
                sel_atrib=function.getfromhits_database(hits_database,hitname,"sel_atrib")
+           #Aqui agora temos clf_real e o sel_atrib tanto se existia antes coma se non
            auxyy=[[]]
            auxyy[0]=forza
            forza=auxyy
            pot=function.potencia(forza[0]) #We have to do it now,with the 135 values
            if "Linear" in str(clf_real):
-              forza=sel_atrib.transform(forza)
-              forza=function.reshapecasero(forza)
+                forza=sel_atrib.transform(forza)
+                forza=function.reshapecasero(forza)
            else:
-              #forza=GridSearchCV(clf_real,aux[1]).transform(forza)
-              #forza=clf_real.transform(forza)
-              #forza=function.reshapecasero(forza)
-              print(clf_real.best_estimator_.transform().predict(forza))
+               forza = sel_atrib.transform(forza)
+               forza= function.reshapecasero(forza)
+
            print(len(forza[0]))
            etiqueta=function.getresultado(forza[0],clf_real)[2:-2] #[2:-2]is jsut to deletede "['" and "']" to print
 
@@ -129,8 +130,6 @@ while resposta!=0:
     elif int(resposta) is 4:
         #Se crean <nombreusuario>_<nombregolpe>.xlsx en el path indicado
         # en "constant.py" que contiene el vector de cada golpe así como su etiqueta y potencia
-
-
         function.getexcel(sesion + ".json")
 
     elif int(resposta) is 5:

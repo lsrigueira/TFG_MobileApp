@@ -31,9 +31,20 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import cython
 
+class clasificador:
 
+    def __init__(self):
+        self.nome = "null"
+        self.golpe = "null"
+        self.clf = "null"
+        self.sel_atrib = "null"
+        self.forza = "null"
+        self.labels = "null"
 
+class basededatos:
+    clasificadores = []
 
+mydb = basededatos
 #Simple method to log in
 def iniciosesion():
         
@@ -47,10 +58,8 @@ def iniciosesion():
                  file.write("#Benvido "+str(resposta)+",os seus datos non estan ordeados porque realmente non deberia entrar no .json\n")
         return resposta
 
-
 #Prepare all the arquives we will need.Thanks to this method we will be able to use 'a' all time
 def iniciar(clf_database):
-
     """
         Un metodo simple que inicia o que necesitamos nos arquivos
     """
@@ -75,9 +84,8 @@ def iniciar(clf_database):
         with open(constant.PATH+"temporal.json",'w') as file_temporal:
             file_temporal.write("{\n")
     except Exception as e:
-        print("ESTO NON DEBERIA SALTAR NUNCA",str(e))
+        print("Excepcion no inicio de sesion",str(e))
     return resposta
-
 
 #Prints the menu,this code could have been in the main .py
 def menu(sesion):
@@ -180,7 +188,7 @@ def getfromhits_database(BD,hitname,nombre):
         if str(BD[i][0]) == str(hitname):
              return  BD[i][j]
         i=i+1
-    return str(NULL)
+    return str("NULL")
 
 
 
@@ -561,80 +569,85 @@ def string2float2D(vector):
         i=i+1
     return vector
 
+
+
 #AQUI MAIS FUNCIONS DE CALIBRAR PORQUE QUEREMOS CHEGAR Ó 90%
 def calibrar(sesion,hitname,verresult):
     
     """
     Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
     """
+    resposta = int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search", 3, False))
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     if sesion is False:
             sesion="temporal"
     simplefilter(action='ignore', category=FutureWarning)
-    scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
     auxvect=valueandlabels(sesion+".json",hitname)[0]
-    #We will get now a list of randomindex to prove each tolerance(20% of samples)
     values=auxvect[0:int(len(auxvect)/2)]
     labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
-    linear = LinearSVC(max_iter=constant.MAXITER)
+    scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
 
-    clf1 = SelectFromModel(linear.fit(values, labels), prefit=True)
-    #O de prefit e para que nos deixe usar o SelectFromModel, xa que lle pasamos o clf directamente por parametros
-    new_values_linear = clf1.transform(values)
-    #new_values_linear=values
+    if int(resposta) is 1:
 
-    linear = LinearSVC(max_iter=constant.MAXITER)
-    #vale,agora temos en new_values todas as mostras de todos os golpes
-    #len(values)=60 porque temos 60 golpes almacenados
-    new_values_linear=reshapecasero(new_values_linear)
-    #y_predict = cross_val_predict(linear, new_values, labels, cv=10)
-    scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
-    i=0
-    acerto=0
-    if verresult is True:
-        print("--------------------------CROSSVALIDATE--------------------------")
-        print("Datos de LinearSVC + SelectFromModel")
-        print("Fit time: " + str(sum(scores["fit_time"]) / 10))
-        print("Score time " + str(sum(scores["score_time"]) / 10))
-        print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
-        print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
-    i=0
-    k=[]
+        #We will get now a list of randomindex to prove each tolerance(20% of samples)  
+        linear = LinearSVC(max_iter=constant.MAXITER)
+        clf1 = SelectFromModel(linear.fit(values, labels), prefit=True)
+        #O de prefit e para que nos deixe usar o SelectFromModel, xa que lle pasamos o clf directamente por parametros
+        new_values_linear = clf1.transform(values)
+        #new_values_linear=values
 
-    values=auxvect[0:int(len(auxvect)/2)]
+        linear = LinearSVC(max_iter=constant.MAXITER)
+        #vale,agora temos en new_values todas as mostras de todos os golpes
+        #len(values)=60 porque temos 60 golpes almacenados
+        new_values_linear=reshapecasero(new_values_linear)
+        #y_predict = cross_val_predict(linear, new_values, labels, cv=10)
+        scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
+        i=0
+        acerto=0
+        if verresult is True:
+            print("--------------------------CROSSVALIDATE--------------------------")
+            print("Datos de LinearSVC + SelectFromModel")
+            print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+            print("Score time " + str(sum(scores["score_time"]) / 10))
+            print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+            print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+    else:
+        i=0
+        k=[]
+        values=auxvect[0:int(len(auxvect)/2)]
 
-    #clf2 = SelectFromModel(LogisticRegression().fit(values,labels), prefit=True)
-    #new_values_logistic=clf2.transform(values)
-    new_values_logistic=values
+        clf2 = SelectFromModel(LogisticRegression().fit(values,labels), prefit=True)
+        new_values_logistic=clf2.transform(values)
+        #new_values_logistic=values
 
-    while i < len(new_values_logistic):
-        k.append(list(map(float,new_values_logistic[i])))
-        i=i+1
-    new_values_logistic=k
+        while i < len(new_values_logistic):
+            k.append(list(map(float,new_values_logistic[i])))
+            i=i+1
+        new_values_logistic=k
 
-    #ESTO ESTA BEN PERO PROBA TODO CON TODO,TEMOS QUE FACER(IGUAL COS CORCHETES) QUE NON PROBE TODOS OS VALORES CON TODOS PARA PODER USAR O SOLVER E MULTINOMIAL EN MULTICLASS
-    tuned_parameters=[{'C':[0.01,0.02,0.03,0.04,0.05,0.75,0.9,1.0],
-                       'penalty':["l2","l1"],'multi_class':["ovr"],'class_weight':['balanced'],
-                       'solver':['liblinear']}]
-    logistic=GridSearchCV(LogisticRegression().fit(new_values_logistic,labels),tuned_parameters)
-    scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
-    if verresult is True:
-        print("--------------------------CROSSVALIDATE--------------------------")
-        print("Datos de LogisticRegression + Grid Search")
-        print("Fit time: " + str(sum(scores["fit_time"]) / 10))
-        print("Score time " + str(sum(scores["score_time"]) / 10))
-        print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
-        print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
-        print("----------------------------------------------------------------")
+        #ESTO ESTA BEN PERO PROBA TODO CON TODO,TEMOS QUE FACER(IGUAL COS CORCHETES) QUE NON PROBE TODOS OS VALORES CON TODOS PARA PODER USAR O SOLVER E MULTINOMIAL EN MULTICLASS
+        tuned_parameters=[{'C':[0.01,0.02,0.03,0.04,0.05,0.75,0.9,1.0],
+                        'penalty':["l2","l1"],'multi_class':["ovr"],'class_weight':['balanced'],
+                        'solver':['liblinear']}]
+        logistic=GridSearchCV(LogisticRegression().fit(new_values_logistic,labels),tuned_parameters)
+        scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
+        if verresult is True:
+            print("--------------------------CROSSVALIDATE--------------------------")
+            print("Datos de LogisticRegression + Grid Search")
+            print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+            print("Score time " + str(sum(scores["score_time"]) / 10))
+            print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+            print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+            print("----------------------------------------------------------------")
 
-    resposta=int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search",3,False))
+    
     if verresult is True:
         resp2=int(eleccion("Desexa probar empiricamente a precisión do clasificador?\n\t\t1)Si\n\t\t2)No",2,False))
         overfit=int(eleccion("Desexa probar con ou sin overfittin?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
     else:
         resp2=2
         overfit=1
-    #1-->Without overfit
+
     if resposta is 1:
         if overfit is 1:
             if verresult is True:
@@ -668,6 +681,7 @@ def calibrar(sesion,hitname,verresult):
 
 
 def probarclf(valuesparam,labelsparam,clf):
+
       """
       Crossvalidation manual que ten informacion mais interesante.
       """
@@ -1512,7 +1526,7 @@ def reducepot(tempos,values):
 
 def getexcel(sesion):
     """
-    Crea un excell cos datos
+    Crea tantos excells da sesion como tipo de golpes teña dado
     """
 
     k = 0
