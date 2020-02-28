@@ -32,22 +32,80 @@ from sklearn.decomposition import PCA
 import cython
 
 class clasificador:
+    
+    def __init__(self,tipoX,golpeX,filtroX,overfittingX,clfX,sel_atribX = "null",forzaX = "null",labelsX = "null"):
+        print("Novo clasificador")
+        self.tipo = tipoX
+        self.golpe = golpeX
+        self.filtro = filtroX
+        self.overfitting = overfittingX
+        self.clf = clfX
+        self.sel_atrib = sel_atribX
+        self.forza = forzaX
+        self.labels = labelsX
 
-    def __init__(self):
-        self.nome = "null"
-        self.golpe = "null"
-        self.clf = "null"
-        self.sel_atrib = "null"
-        self.forza = "null"
-        self.labels = "null"
+    def equals(self,tipoX,golpeX,filtroX,overfitX):
+        if self.tipo == tipoX and self.golpe == golpeX and self.filtro == filtroX and self.overfitting == overfitX:
+            return True
+        return False
+        
 
 class basededatos:
     clasificadores = []
 
-mydb = basededatos
+
+    def __init__(self):
+        print("Inicializando a base de datos")
+
+    def addClf(self,golpeX,tipoX,filtroX,overfittingX,clfX,sel_atribX="null",forzaX="null",labelsX="null"):
+        newclf = clasificador(tipoX,golpeX,filtroX,overfittingX,clfX,sel_atribX,forzaX,labelsX)
+        self.clasificadores.append(newclf)
+
+
+
+    def getclf(self,golpe,tipo,filtro,overfit):
+        """
+            Devolve [clf,sel_atrib,forza,labels] e null nos campos que non existan
+        """
+        i=0
+        while i<len(self.clasificadores):
+            if self.clasificadores[i].equals(tipo,golpe,filtro,overfit):
+                clfreturned = self.clasificadores[i] 
+                return [clfreturned.clf,clfreturned.sel_atrib,clfreturned.forza,clfreturned.labels]
+            i=i+1
+        return "null"
+
+    def contains(self,golpe,tipo,filtro,overfit):
+        """
+        Devolve un boolean
+        """
+        i=0
+        while i<len(self.clasificadores):
+            #print(clasificador(self.clasificadores[i]))
+            if self.clasificadores[i].equals(tipoX=tipo,golpeX=golpe,filtroX=filtro,overfitX= overfit):
+                return True
+            i=i+1
+        return False
+
+    def updateClf(self,golpe,tipo,filtro,overfit,clf,sel_atrib,forza="null",labels="null"):
+        """
+        Returna un bollean co exito da operacion
+        """
+        resultado = self.getclf(golpe, tipo, filtro,overfit)
+        if resultado == "null":
+            return False
+        resultado[0] = clf
+        resultado[1] = sel_atrib
+        if forza == "null" or labels == "null":
+            return True
+        resultado[2] = forza
+        resultado[3] = labels
+        return True
+
+mydb = basededatos()
+
 #Simple method to log in
 def iniciosesion():
-        
         resposta=input("Escriba o seu nome de Usuario")
         try:
             with open (constant.PATH+str(resposta)+".json","r") as file:
@@ -578,6 +636,14 @@ def calibrar(sesion,hitname,verresult):
     Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
     """
     resposta = int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search", 3, False))
+    
+    overfit=int(eleccion("Desexa eliminar o overfitting(recomendable)?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
+    overFitBool = False
+    if(overfit == 1):
+        overFitBool = False
+    else:
+        overFitBool = True
+        
     warnings.filterwarnings("ignore", category=DeprecationWarning)
     if sesion is False:
             sesion="temporal"
@@ -588,20 +654,21 @@ def calibrar(sesion,hitname,verresult):
     scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
 
     if int(resposta) is 1:
-
+        #len(values)=60 porque temos 60 golpes almacenados  
         #We will get now a list of randomindex to prove each tolerance(20% of samples)  
         linear = LinearSVC(max_iter=constant.MAXITER)
         clf1 = SelectFromModel(linear.fit(values, labels), prefit=True)
-        #O de prefit e para que nos deixe usar o SelectFromModel, xa que lle pasamos o clf directamente por parametros
         new_values_linear = clf1.transform(values)
-        #new_values_linear=values
-
         linear = LinearSVC(max_iter=constant.MAXITER)
-        #vale,agora temos en new_values todas as mostras de todos os golpes
-        #len(values)=60 porque temos 60 golpes almacenados
         new_values_linear=reshapecasero(new_values_linear)
-        #y_predict = cross_val_predict(linear, new_values, labels, cv=10)
-        scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
+        
+        #Calculamos os valores sin overfitting tamen e en funcion da eleccion ensinamos un/outro
+        
+        if overfit is 1:
+            scores = cross_validate(linear, new_values_linear, labels, scoring=scoring, cv=10, return_train_score=False)
+        else:
+            scores = cross_validate(
+                linear, reshapecasero(values), labels, scoring=scoring, cv=10, return_train_score=False)
         i=0
         acerto=0
         if verresult is True:
@@ -611,14 +678,21 @@ def calibrar(sesion,hitname,verresult):
             print("Score time " + str(sum(scores["score_time"]) / 10))
             print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
             print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+
+            if(not mydb.contains(hitname,"LinearSVC","nada",overFitBool)):
+                print("Non estaba na base de datos")
+                print(mydb.clasificadores)
+                mydb.addClf(tipoX="LinearSVC",golpeX=hitname,filtroX="nada",overfittingX=overFitBool ,clfX=linear)
+            else:
+                print("Estaba na base de datos")
+                mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
+                               linear, clf1, new_values_linear, labels)
     else:
         i=0
         k=[]
         values=auxvect[0:int(len(auxvect)/2)]
-
         clf2 = SelectFromModel(LogisticRegression().fit(values,labels), prefit=True)
         new_values_logistic=clf2.transform(values)
-        #new_values_logistic=values
 
         while i < len(new_values_logistic):
             k.append(list(map(float,new_values_logistic[i])))
@@ -629,8 +703,14 @@ def calibrar(sesion,hitname,verresult):
         tuned_parameters=[{'C':[0.01,0.02,0.03,0.04,0.05,0.75,0.9,1.0],
                         'penalty':["l2","l1"],'multi_class':["ovr"],'class_weight':['balanced'],
                         'solver':['liblinear']}]
-        logistic=GridSearchCV(LogisticRegression().fit(new_values_logistic,labels),tuned_parameters)
-        scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
+        if overfit is 1:
+            logistic=GridSearchCV(LogisticRegression().fit(new_values_logistic,labels),tuned_parameters)
+            scores = cross_validate(logistic, new_values_logistic, labels, scoring=scoring, cv=10, return_train_score=False)
+        else:
+            logistic=GridSearchCV(LogisticRegression().fit(reshapecasero(values),labels),tuned_parameters)
+            scores = cross_validate(
+                logistic, reshapecasero(values), labels, scoring=scoring, cv=10, return_train_score=False)
+       
         if verresult is True:
             print("--------------------------CROSSVALIDATE--------------------------")
             print("Datos de LogisticRegression + Grid Search")
@@ -643,7 +723,7 @@ def calibrar(sesion,hitname,verresult):
     
     if verresult is True:
         resp2=int(eleccion("Desexa probar empiricamente a precisión do clasificador?\n\t\t1)Si\n\t\t2)No",2,False))
-        overfit=int(eleccion("Desexa probar con ou sin overfittin?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
+       
     else:
         resp2=2
         overfit=1
