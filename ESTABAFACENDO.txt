@@ -1,4 +1,0 @@
-O test está feito e os dats non son separables, vamos empezar a cambiar codigo para collelos da forma que dixo Castaño.
-Quedaría asegurarse que funciona o GridSearch que non creo que funcione.
-
-Empezando o 15/07

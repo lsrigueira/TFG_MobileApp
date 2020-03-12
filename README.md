@@ -1,2 +1,2 @@
-TFG, basicamente hai 9 acelerometros nun saco e vamos intentar clasificaros golpes dados no saco cunha SVM.
-Despois meterémoslle cousas varias pero a diea é esa
+Hai nove acelerómetros nun saco de boxeo. Recollemos a información en forma de JSONS. Utilizamos un historial de JSONS etiquetados para entrenar unha IA que despois clasificará os novos golpes. No directorio "JsonsCollidos" temos unha mostras deles para simular un golpe. 
+Como se pretende executar esto en calquer sistema necesitamos simular un entorno estable. Neste caso usamos Docker porque é moito máis lixeiro que unha máquina virtual e habilitamos así o uso de hardware máis limitado.

@@ -165,7 +165,7 @@ class Controller:
 
         #Spec has all GPIO ports
         # Read the specification file which contain all board GPIO ports available
-	#ATA AQUI CREO QUE SE PODE POÑER O INICIALIZAR,TEÑO QUE VER QUE FAI H3L1SS331DL PERO PARECE SIMPLEMENTE
+	#ATA AQUI CREO QUE SE PODE POnhER O INICIALIZAR,TEnhO QUE VER QUE FAI H3L1SS331DL PERO PARECE SIMPLEMENTE
 	#UN CONSTRUCTOR,ASIQUE PODERIASE INICIALZIAR TAMEN SOLO
 
         self.detectAccelerometers()
