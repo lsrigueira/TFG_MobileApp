@@ -43,8 +43,24 @@ class clasificador:
         self.sel_atrib = sel_atribX
         self.forza = forzaX
         self.labels = labelsX
+ 
+    def equals(self,golpeX,tipoX=None,filtroX=None,overfitX=None):
+        """
+        Aceptamos:
+        1)golpe
+        2)golpe e tipo
+        3)golpe,tipo,overfit e filtro
+        """
+        if tipoX is None and filtroX is None and overfitX is None:
+            if self.golpe == golpeX:
+                return True
+            return False
+        
+        if filtroX is None and overfitX is None:
+            if self.golpe == golpeX and self.tipo == tipoX:
+                return True
+            return False
 
-    def equals(self,tipoX,golpeX,filtroX,overfitX):
         if self.tipo == tipoX and self.golpe == golpeX and self.filtro == filtroX and self.overfitting == overfitX:
             return True
         return False
@@ -53,7 +69,6 @@ class clasificador:
 class basededatos:
     clasificadores = []
 
-
     def __init__(self):
         print("Inicializando a base de datos")
 
@@ -61,49 +76,74 @@ class basededatos:
         newclf = clasificador(tipoX,golpeX,filtroX,overfittingX,clfX,sel_atribX,forzaX,labelsX)
         self.clasificadores.append(newclf)
 
-
-
-    def getclf(self,golpe,tipo,filtro,overfit):
+    def getclf(self,golpe,tipo=None,filtro=None,overfit=None):
         """
-            Devolve [clf,sel_atrib,forza,labels] e null nos campos que non existan
+            Devolve o obxeto clf ou null se non existe
         """
+        if tipo == None:
+            i=0
+            while i<len(self.clasificadores):
+                if self.clasificadores[i].equals(golpe):
+                    return self.clasificadores[i]
+                i=i+1
+            return "null"
         i=0
         while i<len(self.clasificadores):
-            if self.clasificadores[i].equals(tipo,golpe,filtro,overfit):
-                clfreturned = self.clasificadores[i] 
-                return [clfreturned.clf,clfreturned.sel_atrib,clfreturned.forza,clfreturned.labels]
+            if self.clasificadores[i].equals(golpe,tipo,filtro,overfit):
+                return self.clasificadores[i]
             i=i+1
         return "null"
 
-    def contains(self,golpe,tipo,filtro,overfit):
+    def contains(self,golpe,tipo=None,filtro=None,overfit=None):
         """
-        Devolve un boolean
+        Devolve un boolean,sin acabar de implementar
         """
+        if tipo is None and filtro is None and overfit is None:
+            i=0
+            while i<len(self.clasificadores):
+                if self.clasificadores[i].equals(golpe):
+                    return True
+                i+=1
+            return False
+
+        if  filtro is None and overfit is None:
+            i=0
+            while i<len(self.clasificadores):
+                if self.clasificadores[i].equals(golpe,tipo):
+                    return True
+                i+=1
+            return False
+
         i=0
         while i<len(self.clasificadores):
             #print(clasificador(self.clasificadores[i]))
-            if self.clasificadores[i].equals(tipoX=tipo,golpeX=golpe,filtroX=filtro,overfitX= overfit):
+            if self.clasificadores[i].equals(golpeX=golpe,tipoX=tipo,filtroX=filtro,overfitX= overfit):
                 return True
-            i=i+1
+            i+=1
         return False
 
     def updateClf(self,golpe,tipo,filtro,overfit,clf,sel_atrib,forza="null",labels="null"):
         """
-        Returna un bollean co exito da operacion
+        Returna un bolean co exito da operacion
         """
         resultado = self.getclf(golpe, tipo, filtro,overfit)
         if resultado == "null":
             return False
-        resultado[0] = clf
-        resultado[1] = sel_atrib
+        resultado.clf = clf
+        resultado.sel_atrib = sel_atrib
         if forza == "null" or labels == "null":
             return True
-        resultado[2] = forza
-        resultado[3] = labels
+        resultado.forza = forza
+        resultado.labels = labels
         return True
 
-mydb = basededatos()
 
+class usuario:
+
+    def __init__(self):
+        self.mydb = basededatos()
+
+user = usuario()
 #Simple method to log in
 def iniciosesion():
         resposta=input("Escriba o seu nome de Usuario")
@@ -120,7 +160,7 @@ def iniciosesion():
 def iniciar(clf_database):
     """
         Un metodo simple que inicia o que necesitamos nos arquivos
-    """
+    
     i=0
     while i < len(constant.GOLPES):
         if i is 0:
@@ -128,6 +168,7 @@ def iniciar(clf_database):
         else:
             clf_database.append([abreviatura(constant.GOLPES[i]),'NULL','NULL'])
         i=i+1
+    """
 
     resposta=eleccion("Desexa iniciar sesion?\n\t\t1)Si\n\t\t2)No",2,False)
     if int(resposta) is 1:
@@ -652,7 +693,7 @@ def calibrar(sesion,hitname,verresult):
     values=auxvect[0:int(len(auxvect)/2)]
     labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
     scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
-
+    clf1="null"
     if int(resposta) is 1:
         #len(values)=60 porque temos 60 golpes almacenados  
         #We will get now a list of randomindex to prove each tolerance(20% of samples)  
@@ -682,14 +723,14 @@ def calibrar(sesion,hitname,verresult):
             print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
             print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
 
-            if(not mydb.contains(hitname,"LinearSVC","nada",overFitBool)):
-                print("Non estaba na base de datos")
-                print(mydb.clasificadores)
-                mydb.addClf(tipoX="LinearSVC",golpeX=hitname,filtroX="nada",overfittingX=overFitBool ,clfX=linear)
-            else:
-                print("Estaba na base de datos")
-                mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
-                               linear, clf1, new_values_linear, labels)
+        if(not user.mydb.contains(hitname,"LinearSVC","nada",overFitBool)):
+            print("Non estaba na base de datos")
+            print(user.mydb.clasificadores)
+            user.mydb.addClf(golpeX=hitname,tipoX="LinearSVC",filtroX="nada",overfittingX=overFitBool ,clfX=linear,sel_atribX=clf1)
+        else:
+            print("Estaba na base de datos")
+            user.mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
+                            linear, clf1, new_values_linear, labels)
     else:
         i=0
         k=[]
@@ -722,6 +763,16 @@ def calibrar(sesion,hitname,verresult):
             print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
             print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
             print("----------------------------------------------------------------")
+
+        if(not user.mydb.contains(hitname,"Logistic","nada",overFitBool)):
+            print("Non estaba na base de datos")
+            print(user.mydb.clasificadores)
+            user.mydb.addClf(golpeX=hitname,tipoX="Logistic",filtroX="nada",overfittingX=overFitBool ,clfX=logistic,sel_atribX=clf2)
+        else:
+            print("Estaba na base de datos")
+            user.mydb.updateClf(hitname, "Logistic", "nada",overFitBool,
+                            logistic, clf2, new_values_logistic, labels)
+
 
     """
     #New Code
@@ -777,47 +828,6 @@ def calibrar(sesion,hitname,verresult):
             if resp2 is 1:
                 probarclf(new_values_logistic, labels, logistic)
             return [logistic, "null"]
-    
-    
-    """
-    #Descomentar todo esto para que funcione como antes 
-    if verresult is True:
-        resp2=int(eleccion("Desexa probar empiricamente a precision do clasificador?\n\t\t1)Si\n\t\t2)No",2,False))
-    
-    else:
-        resp2=2
-
-    if resposta is 1:
-        if overfit is 1:
-            if verresult is True:
-                print("--------------Sin overfitting os resultados seran mellores--------------")
-            linear.fit(new_values_linear,labels)
-            if resp2 is 1:
-                probarclf(new_values_linear,labels,linear)
-            return [linear,clf1] 
-        else:
-            if verresult is True:
-                print("--------------Con overfitting esperanse peores resultados--------------")
-            linear.fit(values,labels)
-            if resp2 is 1:
-                probarclf(values,labels,linear)
-            return [linear,"null"]
-    elif resposta is 2:
-        if overfit is 1:
-            if verresult is True:
-                print("--------------Sin overfitting os resultados seran mellores--------------")
-            logistic.fit(new_values_logistic,labels)
-            if resp2 is 1:
-                probarclf(new_values_logistic,labels,logistic)
-            return [logistic,clf2]
-        else:
-            if verresult is True:
-                print("--------------Con overfitting esperanse peores resultados--------------")
-            logistic.fit(new_values_logistic,labels)
-            if resp2 is 1:
-                probarclf(new_values_logistic,labels,logistic)
-            return [logistic,"null"]
-    """
 
 def probarclf(valuesparam,labelsparam,clf):
 

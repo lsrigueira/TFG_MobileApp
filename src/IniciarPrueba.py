@@ -81,26 +81,20 @@ while resposta!=0:
         while repetir:
            #Controlador.main()
            forza=function.readJSONS()[1]
-           print(len(forza))
-           clf_prove=function.getfromhits_database(hits_database,hitname,"clf")
-           if str(clf_prove) == "NULL":
-               print("Non hai rexistro de clasificador para este golpe.Escolla un")
+           if not function.user.mydb.contains(hitname):
                aux=function.calibrar(sesion,hitname,False)
-               clf_real=aux[0]
-               sel_atrib=aux[1]
-               function.insertinBD(hits_database,hitname,"clf",clf_real)
-               function.insertinBD(hits_database,hitname,"sel_atrib",sel_atrib)
-           else:
-               clf_real=clf_prove
-               sel_atrib=function.getfromhits_database(hits_database,hitname,"sel_atrib")
-           #Aqui agora temos clf_real e o sel_atrib tanto se existia antes coma se non
+           clasificador=function.user.mydb.getclf(hitname)
+           clf_real=clasificador.clf
+           sel_atrib = clasificador.sel_atrib
            auxyy=[[]]
            auxyy[0]=forza
            forza=auxyy
            pot=function.potencia(forza[0]) #We have to do it now,with the 135 values
            if "Linear" in str(clf_real):
-                forza=sel_atrib.transform(forza)
-                forza=function.reshapecasero(forza)
+                print (clasificador.overfitting)
+                if not clasificador.overfitting:
+                    forza=sel_atrib.transform(forza)
+                    forza=function.reshapecasero(forza)
            else:
                forza = sel_atrib.transform(forza)
                forza= function.reshapecasero(forza)
@@ -143,8 +137,6 @@ while resposta!=0:
         aux=function.calibrar(sesion,hitname,True)
         clf=aux[0]
         sel_atrib=aux[1]
-        function.insertinBD(hits_database,hitname,"clf",clf)
-        function.insertinBD(hits_database,hitname,"sel_atrib",sel_atrib)
 
     elif int(resposta) is 6:
         index_golpe=False
@@ -156,15 +148,17 @@ while resposta!=0:
         decide=function.eleccion("Con ou Sin overfitting?\n\t1)Sin Overfitting\n\t2)Con Overfitting",2,False)
         if int(decide) is 2:
             print("Decidido con overfitting")
-            function.pintarvectoresTSNE(sesion,hitname)
+            if function.user.mydb.contains(hitname,"LinearSVC","nada",True):
+                function.pintarvectoresTSNE(sesion,hitname)
+            else:
+                print("Non existen clasificadores dese tipo")
         else:
             print("Decidido sin overfitting")
-            sel_atrib=function.getfromhits_database(hits_database,hitname,"sel_atrib")
-            if str(sel_atrib) == "NULL":
-                print("Non hai clf con transformador para eliminar overfitting")
-                print(hits_database)
+            if function.user.mydb.contains(hitname,"LinearSVC","nada",False):
+                clasificador=function.user.mydb.getclf(hitname,"LinearSVC","nada",False)
+                function.pintarvectoresTSNE(sesion,hitname,clasificador.sel_atrib)
             else:
-                function.pintarvectoresTSNE(sesion,hitname,sel_atrib)
+                print("Non existen clasificadores dese tipo")
 
     elif int(resposta) is 7:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
