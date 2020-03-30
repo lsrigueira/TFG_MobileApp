@@ -137,13 +137,8 @@ class basededatos:
         resultado.labels = labels
         return True
 
+ 
 
-class usuario:
-
-    def __init__(self):
-        self.mydb = basededatos()
-
-user = usuario()
 #Simple method to log in
 def iniciosesion():
         resposta=input("Escriba o seu nome de Usuario")
@@ -195,7 +190,7 @@ def menu(sesion):
         try:
             resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion"
                                "\n\t4)Sacar Excel da base de datos\n\t5)Iniciar Sesion\n\t6)Pintar vectores"
-                               "\n\t7)Probar cousas random \n\t0)Sair"))
+                               "\n\t7)Configuracion de usuario\n\t8)Probar cousas random \n\t0)Sair"))
             if resposta is 5:
                 resposta = 15
         except:
@@ -204,7 +199,7 @@ def menu(sesion):
         try:
             resposta=int(input("\nQue desexa facer?\n\t1)Modo entrenamento\n\t2)Modo practica\n\t3)Ver historial da sesion"
                                "\n\t4)Sacar Excel da base de datos\n\t5)Probar Clasificadores\n\t6)Pintar vectores"
-                               "\n\t7)Probar cousas random \n\t0)Sair"))
+                               "\n\t7)Configuracion de usuario\n\t8)Probar cousas random \n\t0)Sair"))
         except:
             resposta=int(31239)
     return resposta
@@ -671,7 +666,7 @@ def string2float2D(vector):
 
 
 #AQUI MAIS FUNCIONS DE CALIBRAR PORQUE QUEREMOS CHEGAR o 90%
-def calibrar(sesion,hitname,verresult):
+def calibrar(usuario,sesion,hitname,verresult):
     
     """
     Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
@@ -689,9 +684,38 @@ def calibrar(sesion,hitname,verresult):
     if sesion is False:
             sesion="temporal"
     simplefilter(action='ignore', category=FutureWarning)
-    auxvect=valueandlabels(sesion+".json",hitname)[0]
+    data = valueandlabels(sesion+".json",hitname,True)
+    auxvect = data[0]
+    times = data[1]
     values=auxvect[0:int(len(auxvect)/2)]
     labels=auxvect[int(len(auxvect)/2):int(len(auxvect))]
+
+    ##O if de abaixo e para filtrar os JSONS por se collemos un filtro en vez de nada
+    if usuario.filtro.lower() != "nada":
+        i = 0 
+        while i < len(values):
+            #Eleximos filtro
+            if usuario.filtro == "normal":
+                print("Aplicando o filtro normal")
+                FinalTimes = reduce(times[i],values[i])
+            elif usuario.filtro == "deletevibration":
+                print("Aplicando o filtro de vibración")
+                FinalTimes = reducedelvibr(times[i],values[i])
+            elif usuario.filtro == "reducepot":
+                print("Aplicando o filtro de potencia")
+                FinalTimes = reducepot(times[i],values[i])
+
+            tam=len(FinalTimes)/2#we need to do that cause len changes with pop
+            j = 0
+            FinalValues = []
+            while j < tam :
+                FinalValues.append(FinalTimes.pop())
+                j+=1
+            FinalValues.reverse()
+            values[i]=FinalValues
+            i+=1
+
+
     scoring = ['precision_macro', 'recall_macro', 'precision_micro', 'recall_micro', "f1_micro", "f1_macro", "accuracy"]
     clf1="null"
     if int(resposta) is 1:
@@ -723,13 +747,13 @@ def calibrar(sesion,hitname,verresult):
             print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
             print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
 
-        if(not user.mydb.contains(hitname,"LinearSVC","nada",overFitBool)):
+        if(not usuario.mydb.contains(hitname,"LinearSVC","nada",overFitBool)):
             print("Non estaba na base de datos")
-            print(user.mydb.clasificadores)
-            user.mydb.addClf(golpeX=hitname,tipoX="LinearSVC",filtroX="nada",overfittingX=overFitBool ,clfX=linear,sel_atribX=clf1)
+            print(usuario.mydb.clasificadores)
+            usuario.mydb.addClf(golpeX=hitname,tipoX="LinearSVC",filtroX="nada",overfittingX=overFitBool ,clfX=linear,sel_atribX=clf1)
         else:
             print("Estaba na base de datos")
-            user.mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
+            usuario.mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
                             linear, clf1, new_values_linear, labels)
     else:
         i=0
@@ -764,13 +788,13 @@ def calibrar(sesion,hitname,verresult):
             print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
             print("----------------------------------------------------------------")
 
-        if(not user.mydb.contains(hitname,"Logistic","nada",overFitBool)):
+        if(not usuario.mydb.contains(hitname,"Logistic",usuario.filtro,overFitBool)):
             print("Non estaba na base de datos")
-            print(user.mydb.clasificadores)
-            user.mydb.addClf(golpeX=hitname,tipoX="Logistic",filtroX="nada",overfittingX=overFitBool ,clfX=logistic,sel_atribX=clf2)
+            print(usuario.mydb.clasificadores)
+            usuario.mydb.addClf(golpeX=hitname,tipoX="Logistic",filtroX=usuario.filtro,overfittingX=overFitBool ,clfX=logistic,sel_atribX=clf2)
         else:
             print("Estaba na base de datos")
-            user.mydb.updateClf(hitname, "Logistic", "nada",overFitBool,
+            usuario.mydb.updateClf(hitname, "Logistic", usuario.filtro,overFitBool,
                             logistic, clf2, new_values_logistic, labels)
 
 
@@ -1594,7 +1618,8 @@ def reducepot(tempos,values):
     # Despois cambia a outro acelerometro.Fai este bucle 10 veces.
     #Como temos ordenados os vectores como MuestrasX,Y,Z--MuestrasX,Y,Z...Con coller o indice do menor valor, xa temos
     #automaticamente o indice do menor de cada eje
-    tempos=string2float2D([tempos])
+    if( type(tempos[0][0]) is str):
+        tempos=string2float2D([tempos])
     tempos=tempos[0]
     tempref_x=min(tempos)
 
@@ -1607,7 +1632,8 @@ def reducepot(tempos,values):
     tempref_z=tempos[indexref_z]
     valueref_z=int(values[indexref_z])
 
-    values=string2float2D([values])
+    if( type(values[0][0]) is str):
+        values=string2float2D([values])
     values=values[0]
 
     signoX=np.sign(values[indexref_x])

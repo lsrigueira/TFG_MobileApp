@@ -21,6 +21,15 @@ Value=[]
 GolpesClasificados=[]
 resposta=123123
 hits_database=[[]]
+
+class usuario:
+    def __init__(self):
+        print("Novo usuario")
+        self.mydb = function.basededatos()
+        self.filtro = "nada"
+
+user1    = usuario()
+
 aux=time.time()-aux
 
 #Inicializa todos los archivos(para permitirnos hacer un append) y pide un inicio de sesion
@@ -81,9 +90,10 @@ while resposta!=0:
         while repetir:
            #Controlador.main()
            forza=function.readJSONS()[1]
-           if not function.user.mydb.contains(hitname):
-               aux=function.calibrar(sesion,hitname,False)
-           clasificador=function.user.mydb.getclf(hitname)
+           if not user1.mydb.contains(hitname):
+               aux=function.calibrar(user1,sesion,hitname,False)
+           clasificador=user1.mydb.getclf(hitname)
+           print(clasificador.clf)
            clf_real=clasificador.clf
            sel_atrib = clasificador.sel_atrib
            auxyy=[[]]
@@ -134,7 +144,7 @@ while resposta!=0:
             continue#Its a "break" for the "elif"
         #NOTA,SE PULSAN 0 HAI QUE CALIBRAR TODOS FALTAN POR IMPLEMENTAR ESAS COUSAS
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
-        aux=function.calibrar(sesion,hitname,True)
+        aux=function.calibrar(user1,sesion,hitname,True)
         clf=aux[0]
         sel_atrib=aux[1]
 
@@ -148,19 +158,37 @@ while resposta!=0:
         decide=function.eleccion("Con ou Sin overfitting?\n\t1)Sin Overfitting\n\t2)Con Overfitting",2,False)
         if int(decide) is 2:
             print("Decidido con overfitting")
-            if function.user.mydb.contains(hitname,"LinearSVC","nada",True):
+            if user1.mydb.contains(hitname,"LinearSVC","nada",True):
                 function.pintarvectoresTSNE(sesion,hitname)
             else:
                 print("Non existen clasificadores dese tipo")
         else:
             print("Decidido sin overfitting")
-            if function.user.mydb.contains(hitname,"LinearSVC","nada",False):
-                clasificador=function.user.mydb.getclf(hitname,"LinearSVC","nada",False)
+            if user1.mydb.contains(hitname,"LinearSVC","nada",False):
+                clasificador=user1.mydb.getclf(hitname,"LinearSVC","nada",False)
                 function.pintarvectoresTSNE(sesion,hitname,clasificador.sel_atrib)
             else:
                 print("Non existen clasificadores dese tipo")
 
     elif int(resposta) is 7:
+            valido=function.eleccion("Que desexa modificar?\n\t1)Filtros\n\t0)Salir",1,True)
+            if int(valido) is 0:
+                continue
+            elif int(valido) is 1:
+                newfiltro=function.eleccion(
+                    """Que filtro desexa usar?\n\t1)Nada\n\t2)Normal\n\t3)deletevibration
+                    4)reducepot""",4,False)
+                if int(newfiltro) is 1:
+                    user1.filtro = "nada"
+                elif int(newfiltro) is 2:
+                    user1.filtro = "normal"
+                elif int(newfiltro) is 3:
+                    user1.filtro = "deletevibration"
+                elif int(newfiltro) is 4:
+                    user1.filtro = "reducepot"
+
+
+    elif int(resposta) is 8:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
             index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
