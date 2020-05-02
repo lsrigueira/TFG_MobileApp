@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back_gradient"
+    tools:context=".MainActivity">
+
+
+
+    <RelativeLayout
+        android:id="@+id/MenuPrincipal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_height="60dp"
+        android:layout_width="match_parent"
+
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Menu Principal"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#FFD519"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/Train_algorithm"
+        app:layout_constraintTop_toBottomOf="@+id/MenuPrincipal"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Entrenar Algoritmo"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/Train_myself"
+        app:layout_constraintTop_toBottomOf="@+id/Train_algorithm"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Entrenarme"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/Historial"
+        app:layout_constraintTop_toBottomOf="@+id/Train_myself"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Historial Sesión"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/Clasificadores"
+        app:layout_constraintTop_toBottomOf="@+id/Historial"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Clasificadores"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/TSNE"
+        app:layout_constraintTop_toBottomOf="@+id/Clasificadores"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="TSNE"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/LogOut"
+        app:layout_constraintTop_toBottomOf="@+id/TSNE"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Log Out"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
