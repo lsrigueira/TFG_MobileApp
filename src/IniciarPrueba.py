@@ -12,9 +12,11 @@ aux=time.time()
 import function
 import numpy as np
 from sklearn.model_selection import GridSearchCV
+from collections import namedtuple
 #import Controlar
 import os
 import xlsxwriter
+import socket
 #############################################################PROGRAMA PRINCIPAL#############################################################
 Time=[]
 Value=[]
@@ -23,12 +25,41 @@ resposta=123123
 hits_database=[[]]
 
 class usuario:
-    def __init__(self):
+    def __init__(self ,remoto = False):
         print("Novo usuario")
         self.mydb = function.basededatos()
         self.filtro = "nada"
+        self.remoto = remoto
+        if remoto == True:
+            HOST = "localhost"
+            PORT = 9999
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print('Socket created')
+            try:
+                s.bind((HOST, PORT))
+            except socket.error as err:
+                print("Bind failed. Error Code : " .format(err))
+            s.listen(10)#Maximo 10 peticions
+            print("Esperando conexion")
+            self.conn, self.addr = s.accept()
+        
 
-user1    = usuario()
+    def esperar(self ,donde = ""):
+        if self.remoto:
+            data = self.conn.recv(1024)
+            return int(data.decode(encoding='UTF-8'))
+        else:
+            return function.menu(sesion)
+
+
+
+remoto = False
+if(int(input("\nDesexa executar o programa en remoto ou local(Defecto)\n\r1)Remoto\n\r2)Local")) == 1):
+    remoto = True
+
+user1 = usuario(remoto)
+Constants = namedtuple('Constants', ['Back', 'Train_Algorithm', 'Train_Me','History','Data_Csv','Calibrate','Show_Vector','Configuration'])
+constants = Constants(0, 1, 2, 3, 4, 5, 6, 7)
 
 aux=time.time()-aux
 
@@ -47,9 +78,10 @@ print(aux+aux2)
 
 while resposta!=0:
     #Le pasamos la sesion porque si es un usuario anonimo no puede acceder al menu completo.
-    resposta=function.menu(sesion)
+    
+    resposta = user1.esperar()
 
-    if int(resposta) is 1:
+    if int(resposta) is constants.Train_Algorithm:
         abreviatura=function.seleccion_golpe()
         if abreviatura not in GolpesClasificados:
             GolpesClasificados.append(abreviatura)
@@ -78,7 +110,7 @@ while resposta!=0:
         function.escribirJSON(abreviatura,sesion,tempos=tempos,forza=forza,calidade=calidade)#opens "temporal.json" if there is no sesion
     #forza and calidade are optional values so we need to indicate what "forza" is.Its confusing in this case cause they have the same name
 
-    elif int(resposta) is 2:
+    elif int(resposta) is constants.Train_Me:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
             index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
@@ -127,16 +159,16 @@ while resposta!=0:
               repetir=False
            function.escribirJSON(str(time.gmtime(time.time())[3]+2)+"-"+str(time.gmtime(time.time())[4]),"historial",string="Nombre:"+hitname[:-4]+"\n\t\t\tPotencia:"+str(pot)+"\n\t\t\tCalificacion:\""+str(etiqueta)+"\"")
 
-    elif int(resposta) is 3:
+    elif int(resposta) is constants.History:
         #Ensenhamos el historial de golpes del runtime
         function.verhistorial()
 
-    elif int(resposta) is 4:
+    elif int(resposta) is constants.Data_Csv:
         #Se crean <nombreusuario>_<nombregolpe>.xlsx en el path indicado
         # en "constant.py" que contiene el vector de cada golpe asi como su etiqueta y potencia
         function.getexcel(sesion + ".json")
 
-    elif int(resposta) is 5:
+    elif int(resposta) is constants.Calibrate:
         index_golpe = False#One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
             index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Todos")#This function return False if an invalid number has been chosen
@@ -148,7 +180,7 @@ while resposta!=0:
         clf=aux[0]
         sel_atrib=aux[1]
 
-    elif int(resposta) is 6:
+    elif int(resposta) is constants.Show_Vector:
         index_golpe=False
         while index_golpe is False:
            index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
@@ -170,7 +202,7 @@ while resposta!=0:
             else:
                 print("Non existen clasificadores dese tipo")
 
-    elif int(resposta) is 7:
+    elif int(resposta) is constants.Configuration:
             valido=function.eleccion("Que desexa modificar?\n\t1)Filtros\n\t0)Salir",1,True)
             if int(valido) is 0:
                 continue
@@ -274,7 +306,7 @@ while resposta!=0:
            sesion=function.iniciosesion()
            GolpesClasificados.extend(function.cargarperfil(sesion))
 
-    elif int(resposta) is 0:
+    elif int(resposta) is constants.Back:
              with open(constant.PATH+"temporal.json",'a') as temporal_file:
                  temporal_file.write("}")
              with open(constant.PATH+"historial.json",'a') as temporal_file:
