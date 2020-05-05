@@ -3,9 +3,6 @@
 2)Implementar threads?
 """
 
-
-
-
 #ESTE CODIGO "LIMITA" OS SENSORES XA QUE SOLLO COLLEMOS 10 MOSTRAS DOS JSONS(todas as que da coa configuracion actual)
 import constant
 import time
@@ -26,6 +23,7 @@ import xlsxwriter
 import pandas as pd
 import seaborn as sn
 import plotly.plotly as py
+import usuario
 from sklearn.manifold import t_sne
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
@@ -140,16 +138,15 @@ class basededatos:
  
 
 #Simple method to log in
-def iniciosesion():
-        resposta=input("Escriba o seu nome de Usuario")
+def iniciosesion(username):
         try:
-            with open (constant.PATH+str(resposta)+".json","r") as file:
+            with open (constant.PATH+str(username)+".json","r") as file:
                 print("Cargando o seu perfil...")
         except:
             print("Non existe ningun usuario con ese nome,xerando un perfil...")
-            with open (constant.PATH+str(resposta)+".json","w") as file:
-                 file.write("#Benvido "+str(resposta)+",os seus datos non estan ordeados porque realmente non deberia entrar no .json\n")
-        return resposta
+            with open (constant.PATH+str(username)+".json","w") as file:
+                 file.write("#Benvido "+str(username)+",os seus datos non estan ordeados porque realmente non deberia entrar no .json\n")
+        return 
 
 #Prepare all the arquives we will need.Thanks to this method we will be able to use 'a' all time
 def iniciar(clf_database):
@@ -164,13 +161,6 @@ def iniciar(clf_database):
             clf_database.append([abreviatura(constant.GOLPES[i]),'NULL','NULL'])
         i=i+1
     """
-
-    resposta=eleccion("Desexa iniciar sesion?\n\t\t1)Si\n\t\t2)No",2,False)
-    if int(resposta) is 1:
-        resposta=iniciosesion()
-    else: 
-        print("Continuara en modo anonimo")
-        resposta=False
     try:
         with open (constant.PATH+"historial.json","w") as file_historial:
             #Timezone by defect is 2 hours less than out timezone,so we use "+2" and we dont need to install "os" library
@@ -179,7 +169,7 @@ def iniciar(clf_database):
             file_temporal.write("{\n")
     except Exception as e:
         print("Excepcion no inicio de sesion",str(e))
-    return resposta
+    return 
 
 #Prints the menu,this code could have been in the main .py
 def menu(sesion):
@@ -439,12 +429,12 @@ def abreviatura(golpe):
         abrev=str(golpe[0:3])+"_clf"
     return abrev
 
-
+"""
 #Repeats the message until a valid number number is chosen,last parameter indicate if "0" is a valid number
 def eleccion(mensaxe,nparametros,haicero):
-    """
+    ""
     Repite a mensaxe ata que se selecciona un numero valido,o ultimo parametro indica se o "0" e valido
-    """
+    "
     valido=0
     while valido is 0:
         try:
@@ -458,60 +448,7 @@ def eleccion(mensaxe,nparametros,haicero):
         except:
             valido = 0
     return devolver
-
-
-#Interactive menu to choose the hit+direction
-def seleccion_golpe():
-    """
-    Menu iteractivo para selecciona o golpe a direccion
-    """
-    print("Escolla un golpe:")
-    invalido = True
-    while invalido:
-        invalido = False
-        mostrar_golpes()
-        golpe=input()
-        try:
-            golpe=constant.GOLPES[int(golpe)-1]
-        except:
-            print("Ha seleccionado un numero invalido")
-            invalido = True
-    print("Has seleccionado "+str(golpe))
-    devolver=abreviatura(golpe)
-    return devolver
-
-
-#Return all the hits we have clasifies, 0 if the list is empty and False if an invalid number has been chosen
-def elexir_golpes_clasificados(GolpesClasificados,Ceromessage):
-    """
-    Devolve todos os golpes clasificados, 0 se esta vacio e False se seleccionamos algo invalido
-    """
-    tamano=0
-    print("-----------------------------------------")
-    interaccion = 0
-    while interaccion < len(GolpesClasificados):
-        j=0
-        while j < len(constant.GOLPES):
-            i=0
-            if abreviatura(constant.GOLPES[j]) == GolpesClasificados[interaccion]: #this is True if the hit is in GolpesClasificados(has been clasified)
-                print("\t"+str(tamano+1)+")"+constant.GOLPES[j])
-                tamano = tamano+1
-            j=j+1
-        interaccion=interaccion+1
-    if tamano is 0:
-        print("No hay registros de golpes clasificados,no puede entrenar asi")
-        return -1
-    else:
-        print("\t0)"+Ceromessage)
-        try:
-            golpe=int(input("Escolla o golpe que desexa entrenar:"))
-        except:
-            golpe=0
-        if golpe > tamano:
-            print("Operacion invalida")
-            return False
-    return golpe
-
+"""
 
 #Return all the abrevs are present in the sesion.json
 def cargarperfil(sesion):
@@ -671,9 +608,9 @@ def calibrar(usuario,sesion,hitname,verresult):
     """
     Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
     """
-    resposta = int(eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search", 3, False))
+    resposta = int(usuario.eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search", 3, False))
     
-    overfit=int(eleccion("Desexa eliminar o overfitting(recomendable)?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
+    overfit=int(usuario.eleccion("Desexa eliminar o overfitting(recomendable)?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
     overFitBool = False
     if(overfit == 1):
         overFitBool = False
@@ -812,7 +749,7 @@ def calibrar(usuario,sesion,hitname,verresult):
             probarclf(new_values_linear,labels,linear)
     """
     if verresult is True:
-        resp2 = int(eleccion(
+        resp2 = int(usuario.eleccion(
             "Desexa probar empiricamente a precision do clasificador?\n\t\t1)Si\n\t\t2)No", 2, False))
 
     else:

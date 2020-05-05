@@ -1,56 +1,30 @@
 """AQUI FALTACOLLER SEMPRE O SEL:ATRIB,SOLO SE COLLIA DENTRO DO IF E PETABA AS VECES POR ESO
 """
 
-
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_predict
 from sklearn.feature_selection import SelectFromModel
-#from sklearn.manifold import TSNE
-import constant
+
 import time
 aux=time.time()
-import function
+
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 from collections import namedtuple
 #import Controlar
 import os
 import xlsxwriter
-import socket
+
+import function
+import constant
+import usuario
+from usuario import usuario
 #############################################################PROGRAMA PRINCIPAL#############################################################
 Time=[]
 Value=[]
 GolpesClasificados=[]
 resposta=123123
 hits_database=[[]]
-
-class usuario:
-    def __init__(self ,remoto = False):
-        print("Novo usuario")
-        self.mydb = function.basededatos()
-        self.filtro = "nada"
-        self.remoto = remoto
-        if remoto == True:
-            HOST = "localhost"
-            PORT = 9999
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print('Socket created')
-            try:
-                s.bind((HOST, PORT))
-            except socket.error as err:
-                print("Bind failed. Error Code : " .format(err))
-            s.listen(10)#Maximo 10 peticions
-            print("Esperando conexion")
-            self.conn, self.addr = s.accept()
-        
-
-    def esperar(self ,donde = ""):
-        if self.remoto:
-            data = self.conn.recv(1024)
-            return int(data.decode(encoding='UTF-8'))
-        else:
-            return function.menu(sesion)
-
 
 
 remoto = False
@@ -65,24 +39,35 @@ aux=time.time()-aux
 
 #Inicializa todos los archivos(para permitirnos hacer un append) y pide un inicio de sesion
 #devolviendo un False si el usuario sigue en modo anonimo
-sesion=function.iniciar(hits_database)
+resposta=user1.eleccion("Desexa iniciar sesion?\n\t\t1)Si\n\t\t2)No",2,False)
+
+if int(resposta) is 1: 
+    print("Escriba o seu nome de usuario")
+    username = user1.esperar("login")
+    function.iniciosesion(username)
+else: 
+    print("Continuara en modo anonimo")
+    username=False
+
+function.iniciar(hits_database)
+
 aux2=time.time()
 
 #Controlador=Controlar.Controller()
-
-if sesion is not False:
+user1.setName(username)
+if user1.name is not False:
     #Leemos su .json para saber que golpes tiene en la base de datos y ensenhar solo eses en el modo practica
-    GolpesClasificados.extend(function.cargarperfil(sesion))
+    GolpesClasificados.extend(function.cargarperfil(user1.name))
 aux2=time.time()-aux2
 print(aux+aux2)
 
 while resposta!=0:
     #Le pasamos la sesion porque si es un usuario anonimo no puede acceder al menu completo.
     
-    resposta = user1.esperar()
+    resposta = user1.esperar("menu")
 
     if int(resposta) is constants.Train_Algorithm:
-        abreviatura=function.seleccion_golpe()
+        abreviatura=user1.seleccion_golpe()
         if abreviatura not in GolpesClasificados:
             GolpesClasificados.append(abreviatura)
         interaccion = 0
@@ -101,19 +86,19 @@ while resposta!=0:
             else :
                 forza.append(FinalValues)
                 tempos.append(FinalTimes)
-            valido=function.eleccion(function.mostrar_direccions(),len(constant.DIRECCIONS),False)
+            valido=user1.eleccion(function.mostrar_direccions(),len(constant.DIRECCIONS),False)
             calidade.append(constant.DIRECCIONS[int(valido)-1])
-            valido=function.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
+            valido=user1.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
             if int(valido) is 2:
                 repetir = False
             interaccion=interaccion+1
-        function.escribirJSON(abreviatura,sesion,tempos=tempos,forza=forza,calidade=calidade)#opens "temporal.json" if there is no sesion
+        function.escribirJSON(abreviatura,user1.name,tempos=tempos,forza=forza,calidade=calidade)#opens "temporal.json" if there is no sesion
     #forza and calidade are optional values so we need to indicate what "forza" is.Its confusing in this case cause they have the same name
 
     elif int(resposta) is constants.Train_Me:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
-            index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
+            index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
          #Atras is the message that appears in position "0"
         if int(index_golpe) is -1 or 0:#Function return -1 if the list is empty,0 if they want to go "atras"
             continue#Its a "break" for the "elif"
@@ -123,7 +108,7 @@ while resposta!=0:
            #Controlador.main()
            forza=function.readJSONS()[1]
            if not user1.mydb.contains(hitname):
-               aux=function.calibrar(user1,sesion,hitname,False)
+               aux=function.calibrar(user1,user1.name,hitname,False)
            clasificador=user1.mydb.getclf(hitname)
            print(clasificador.clf)
            clf_real=clasificador.clf
@@ -144,8 +129,8 @@ while resposta!=0:
            print(len(forza[0]))
            etiqueta=function.getresultado(forza[0],clf_real)[2:-2] #[2:-2]is jsut to deletede "['" and "']" to print
 
-           vectorhitname=function.ultimosgolpes(sesion,hitname)
-           vectoretiqueta=function.ultimosgolpes(sesion,hitname,etiqueta)
+           vectorhitname=function.ultimosgolpes(user1.name,hitname)
+           vectoretiqueta=function.ultimosgolpes(user1.name,hitname,etiqueta)
            historialhitname=function.leerhistorial(hitname[:-4]) #Hitname e nombre_clf,no historial solo gardamos o nome
            historialetiqueta=function.leerhistorial(hitname[:-4],etiqueta)
            mediahitname=function.mediapot(vectorhitname,historialhitname)
@@ -154,7 +139,7 @@ while resposta!=0:
            print("O golpe con potencia "+str(pot)+" foi "+str(etiqueta))
            print("\t"+str(100*pot/mediahitname)+"% de "+str(hitname[:-4]))
            print("\t"+str(100*pot/mediaetiqueta)+"% de "+str(hitname[:-4])+" "+str(etiqueta))
-           valido=function.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
+           valido=user1.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
            if int(valido) is 2:
               repetir=False
            function.escribirJSON(str(time.gmtime(time.time())[3]+2)+"-"+str(time.gmtime(time.time())[4]),"historial",string="Nombre:"+hitname[:-4]+"\n\t\t\tPotencia:"+str(pot)+"\n\t\t\tCalificacion:\""+str(etiqueta)+"\"")
@@ -166,48 +151,48 @@ while resposta!=0:
     elif int(resposta) is constants.Data_Csv:
         #Se crean <nombreusuario>_<nombregolpe>.xlsx en el path indicado
         # en "constant.py" que contiene el vector de cada golpe asi como su etiqueta y potencia
-        function.getexcel(sesion + ".json")
+        function.getexcel(user1.name + ".json")
 
     elif int(resposta) is constants.Calibrate:
         index_golpe = False#One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
-            index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Todos")#This function return False if an invalid number has been chosen
+            index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Todos")#This function return False if an invalid number has been chosen
         if int(index_golpe) is -1:#Function return -1 if the list is empty
             continue#Its a "break" for the "elif"
         #NOTA,SE PULSAN 0 HAI QUE CALIBRAR TODOS FALTAN POR IMPLEMENTAR ESAS COUSAS
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
-        aux=function.calibrar(user1,sesion,hitname,True)
+        aux=function.calibrar(user1,user1.name,hitname,True)
         clf=aux[0]
         sel_atrib=aux[1]
 
     elif int(resposta) is constants.Show_Vector:
         index_golpe=False
         while index_golpe is False:
-           index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
+           index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
         if int(index_golpe) is -1 or 0:   #Function return -1 if the list is empty,0 if they want to go "atras"
            continue
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
-        decide=function.eleccion("Con ou Sin overfitting?\n\t1)Sin Overfitting\n\t2)Con Overfitting",2,False)
+        decide=user1.eleccion("Con ou Sin overfitting?\n\t1)Sin Overfitting\n\t2)Con Overfitting",2,False)
         if int(decide) is 2:
             print("Decidido con overfitting")
             if user1.mydb.contains(hitname,"LinearSVC","nada",True):
-                function.pintarvectoresTSNE(sesion,hitname)
+                function.pintarvectoresTSNE(user1.name,hitname)
             else:
                 print("Non existen clasificadores dese tipo")
         else:
             print("Decidido sin overfitting")
             if user1.mydb.contains(hitname,"LinearSVC","nada",False):
                 clasificador=user1.mydb.getclf(hitname,"LinearSVC","nada",False)
-                function.pintarvectoresTSNE(sesion,hitname,clasificador.sel_atrib)
+                function.pintarvectoresTSNE(user1.name,hitname,clasificador.sel_atrib)
             else:
                 print("Non existen clasificadores dese tipo")
 
     elif int(resposta) is constants.Configuration:
-            valido=function.eleccion("Que desexa modificar?\n\t1)Filtros\n\t0)Salir",1,True)
+            valido=user1.eleccion("Que desexa modificar?\n\t1)Filtros\n\t0)Salir",1,True)
             if int(valido) is 0:
                 continue
             elif int(valido) is 1:
-                newfiltro=function.eleccion(
+                newfiltro=user1.eleccion(
                     """Que filtro desexa usar?\n\t1)Nada\n\t2)Normal\n\t3)deletevibration
                     4)reducepot""",4,False)
                 if int(newfiltro) is 1:
@@ -223,12 +208,12 @@ while resposta!=0:
     elif int(resposta) is 8:
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         while index_golpe is False:#index_golpe
-            index_golpe=function.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
+            index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
             #Atras is the message that appears in position "0"
         if int(index_golpe) is -1 or 0:#Function return -1 if the list is empty,0 if they want to go "atras"
             continue#Its a "break" for the "elif"
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
-        vectorfinal= function.valueandlabels(sesion+".json",hitname,True)
+        vectorfinal= function.valueandlabels(user1.name+".json",hitname,True)
         aux=vectorfinal[0]
         todosvalues=aux[0:int(len(aux)/2)]
         todoslabels=aux[int(len(aux)/2):]
@@ -303,8 +288,10 @@ while resposta!=0:
 
 
     elif int(resposta) is 15:#U wont see 15 in menu, but return 15
-           sesion=function.iniciosesion()
-           GolpesClasificados.extend(function.cargarperfil(sesion))
+           print("Escriba o seu nome de usuario")
+           user1.name = user1.esperar("login")
+           function.iniciosesion(user1.name)
+           GolpesClasificados.extend(function.cargarperfil(user1.name))
 
     elif int(resposta) is constants.Back:
              with open(constant.PATH+"temporal.json",'a') as temporal_file:
