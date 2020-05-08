@@ -9,14 +9,14 @@ class usuario:
         self.filtro = "nada"
         self.remoto = remoto
         if remoto == True:
-            HOST = "localhost"
-            PORT = 9999
+            HOST = "192.168.0.4"
+            PORT = 8888
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print('Socket created')
             try:
                 s.bind((HOST, PORT))
             except socket.error as err:
-                print("Bind failed. Error Code : " .format(err))
+                print("Bind failed. Error Code : ".format(err))
             s.listen(10)#Maximo 10 peticions
             print("Esperando conexion")
             self.conn, self.addr = s.accept()

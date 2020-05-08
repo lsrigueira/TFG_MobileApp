@@ -23,7 +23,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
-
+    private  Connection con = new Connection("localhost",8888);
     private class Watson extends AsyncTask<String, Void, String>{
 
         @Override
@@ -43,15 +43,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Button btn = findViewById(R.id.TSNE);
 
-        Button btn = findViewById(R.id.Train_myself);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 probar();
             }
         });
+        Button btnTrainMe = findViewById(R.id.Train_myself);
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                con.send();
+            }
+        });
     }
-
 
     public void probar(){
         //private TextToSpeech mtts = new TextToSpeech();
