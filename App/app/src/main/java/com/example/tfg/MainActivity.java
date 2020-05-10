@@ -23,21 +23,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
-    private  Connection con = new Connection("localhost",8888);
-    private class Watson extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected String doInBackground(String... textToSpeak) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            });
-            return null;
-        }
-    }
-
+      //private  Connection con = new Connection("192.168.0.4",8888);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +36,15 @@ public class MainActivity extends AppCompatActivity {
                 probar();
             }
         });
+
         Button btnTrainMe = findViewById(R.id.Train_myself);
-        btn.setOnClickListener(new View.OnClickListener() {
+        btnTrainMe.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                con.send();
+                conexion();
             }
         });
+
+
     }
 
     public void probar(){
@@ -72,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             Toast.makeText(this,""+e.getMessage(),Toast.LENGTH_SHORT);
         }
+    }
+
+    public void conexion(){
+        Connection ejemplo = new Connection();
+        ejemplo.execute();
     }
 
     @Override
