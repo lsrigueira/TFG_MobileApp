@@ -4,18 +4,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.ibm.watson.text_to_speech.v1.*;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -25,25 +18,36 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
       //private  Connection con = new Connection("192.168.0.4",8888);
 
+    Connection conn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button btn = findViewById(R.id.TSNE);
+        Button TSNEBtn = findViewById(R.id.TSNE);
+        Button TrainMeBtn = findViewById(R.id.LogOut);
+        Button historialBtn = findViewById(R.id.Historial);
+        Button clasifiersBtn = findViewById(R.id.Clasificadores);
+        Button logOutBtn = findViewById(R.id.LogOut);
 
-        btn.setOnClickListener(new View.OnClickListener() {
+
+        TrainMeBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                conn.execute("2");
+            }
+        });
+
+        clasifiersBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                conn.execute("5");
+            }
+        });
+
+        TrainMeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 probar();
             }
         });
-
-        Button btnTrainMe = findViewById(R.id.Train_myself);
-        btnTrainMe.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                conexion();
-            }
-        });
-
 
     }
 
@@ -63,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void conexion(){
-        Connection ejemplo = new Connection();
-        ejemplo.execute();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

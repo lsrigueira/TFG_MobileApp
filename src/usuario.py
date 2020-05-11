@@ -27,7 +27,7 @@ class usuario:
     def esperar(self ,donde = ""):
         if self.remoto:
             if donde == "login":
-                return "pruebajavier"
+                return input()
             else:    
                 data = self.conn.recv(1024)
                 return int(data.decode(encoding='UTF-8'))
