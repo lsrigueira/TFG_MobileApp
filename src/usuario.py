@@ -1,6 +1,7 @@
 import function
 import socket
 import constant
+import time
 
 class usuario:
     def __init__(self ,remoto = False):
@@ -20,6 +21,9 @@ class usuario:
             s.listen(10)#Maximo 10 peticions
             print("Esperando conexion")
             self.conn, self.addr = s.accept()
+            print("Vamos a enviar un saludo\n")
+            self.conn.send("ok\r\n".encode())
+            print("Saludo enviado")
         
     def setName(self,NameX):
         self.name = NameX
@@ -37,6 +41,9 @@ class usuario:
             return input()
         else:
             return int(input())
+    def enviar(self,data):
+        if self.remoto:
+            self.conn.send( (data+"\r\n").encode() )
 
     #Repeats the message until a valid number number is chosen,last parameter indicate if "0" is a valid number
     def eleccion(self,mensaxe,nparametros,haicero):

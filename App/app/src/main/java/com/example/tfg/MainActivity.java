@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Button TSNEBtn = findViewById(R.id.TSNE);
         Button TrainMeBtn = findViewById(R.id.LogOut);
@@ -33,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
         TrainMeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                conn.execute("2");
+                Connection.send("2");
             }
         });
 
         clasifiersBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                conn.execute("5");
+                Connection.send("5");
             }
         });
 
