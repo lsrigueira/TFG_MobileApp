@@ -32,6 +32,7 @@ public class logIn extends AppCompatActivity {
             public void onClick(View v) {
 
                 Connection.send("1");
+
                 Connection.send("pruebajavier");
                 recivir();
             }

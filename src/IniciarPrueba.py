@@ -45,6 +45,7 @@ if int(resposta) is 1:
     print("Escriba o seu nome de usuario")
     username = user1.esperar("login")
     function.iniciosesion(username)
+    user1.enviar("ok")
 else: 
     print("Continuara en modo anonimo")
     username=False
@@ -100,7 +101,9 @@ while resposta!=0:
         while index_golpe is False:#index_golpe
             index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
          #Atras is the message that appears in position "0"
-        if int(index_golpe) is -1 or 0:#Function return -1 if the list is empty,0 if they want to go "atras"
+       
+        if int(index_golpe) is -1 or int(index_golpe) is 0:#Function return -1 if the list is empty,0 if they want to go "atras"
+            user1.enviar("back")
             continue#Its a "break" for the "elif"
         hitname=GolpesClasificados[int(index_golpe)-1]#to get the real hit name,(funcion menu starts at 1)
         repetir = True
@@ -108,7 +111,11 @@ while resposta!=0:
            #Controlador.main()
            forza=function.readJSONS()[1]
            if not user1.mydb.contains(hitname):
+               user1.enviar("clasificadores")   
                aux=function.calibrar(user1,user1.name,hitname,False)
+               
+           else:
+               user1.enviar("resultado")
            clasificador=user1.mydb.getclf(hitname)
            print(clasificador.clf)
            clf_real=clasificador.clf

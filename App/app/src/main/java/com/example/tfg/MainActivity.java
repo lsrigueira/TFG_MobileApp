@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         Button TSNEBtn = findViewById(R.id.TSNE);
-        Button TrainMeBtn = findViewById(R.id.LogOut);
+        Button TrainMeBtn = findViewById(R.id.Train_myself);
         Button historialBtn = findViewById(R.id.Historial);
         Button clasifiersBtn = findViewById(R.id.Clasificadores);
         Button logOutBtn = findViewById(R.id.LogOut);
@@ -35,16 +35,18 @@ public class MainActivity extends AppCompatActivity {
         TrainMeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("2");
+                recivir("TrainMe");
             }
         });
 
         clasifiersBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("5");
+                recivir("Clasificadores");
             }
         });
 
-        TrainMeBtn.setOnClickListener(new View.OnClickListener() {
+        historialBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 probar();
             }
@@ -81,5 +83,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+
+    public void  recivir(final String GoTo){
+
+        final Thread receive = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent myIntent = null;
+                switch (GoTo.toLowerCase()){
+                    case "trainme":
+                    case "clasificadores":
+                        myIntent = new Intent(getBaseContext(),   golpes.class);
+                        break;
+
+                }
+                String respuesta = Connection.receive();
+                if(respuesta.equals("ok")) {
+                    System.out.println("ACEPTADO");
+                    startActivity(myIntent);
+                }
+                return ;
+            }
+        });
+        receive.start();
     }
 }

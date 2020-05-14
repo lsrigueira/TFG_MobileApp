@@ -21,9 +21,7 @@ class usuario:
             s.listen(10)#Maximo 10 peticions
             print("Esperando conexion")
             self.conn, self.addr = s.accept()
-            print("Vamos a enviar un saludo\n")
-            self.conn.send("ok\r\n".encode())
-            print("Saludo enviado")
+            
         
     def setName(self,NameX):
         self.name = NameX
@@ -31,10 +29,13 @@ class usuario:
     def esperar(self ,donde = ""):
         if self.remoto:
             if donde == "login":
-                return input()
+                data = self.conn.recv(1024).decode(encoding="UTF-8")
+                print("RECIBIDO: "+data)
+                return data
             else:    
-                data = self.conn.recv(1024)
-                return int(data.decode(encoding='UTF-8'))
+                data = self.conn.recv(1024).decode(encoding="UTF-8")
+                print("RECIBIDO: "+data)
+                return int(data)
         elif donde == "menu":
             return function.menu(self.name)
         elif donde == "login":
@@ -42,6 +43,9 @@ class usuario:
         else:
             return int(input())
     def enviar(self,data):
+        """
+        O metodo xa codifica,solo a string que desexa enviar debe ser enviada
+        """
         if self.remoto:
             self.conn.send( (data+"\r\n").encode() )
 
@@ -63,6 +67,8 @@ class usuario:
                         valido=1
             except:
                 valido = 0
+        if self.remoto:
+            self.conn.send("ok\r\n".encode())
         return devolver
 
 
