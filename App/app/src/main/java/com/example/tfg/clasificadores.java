@@ -16,13 +16,14 @@ public class clasificadores extends AppCompatActivity {
 
         Button linearBtn = findViewById(R.id.LinearSVC);
         Button logisticBtn = findViewById(R.id.Logigistic);
-        Button historialBtn = findViewById(R.id.Goback);
 
 
         linearBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("1");
-                Intent myIntent = new Intent(getBaseContext(),   MainActivity.class);
+                Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
+                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin(Recomendado)?\"");
+                myIntent.putExtra("nextscreen","resultados");
                 startActivity(myIntent);
                 //recivir();
             }
@@ -31,7 +32,9 @@ public class clasificadores extends AppCompatActivity {
         logisticBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("2");
-                Intent myIntent = new Intent(getBaseContext(),   MainActivity.class);
+                Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
+                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin(Recomendado)?\"");
+                myIntent.putExtra("nextscreen","resultados");
                 startActivity(myIntent);
                 //recivir();
             }

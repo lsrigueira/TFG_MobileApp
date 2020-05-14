@@ -46,7 +46,7 @@ public class logIn extends AppCompatActivity {
             public void run() {
                 Intent myIntent = new Intent(getBaseContext(),   MainActivity.class);
                 String respuesta = Connection.receive();
-                if(respuesta.equals("ok")){
+                if(respuesta.equals("LogOk")){
                     System.out.println("ACEPTADO");
                     startActivity(myIntent);
                 }else{

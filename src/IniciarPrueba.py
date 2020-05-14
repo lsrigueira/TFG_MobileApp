@@ -45,7 +45,7 @@ if int(resposta) is 1:
     print("Escriba o seu nome de usuario")
     username = user1.esperar("login")
     function.iniciosesion(username)
-    user1.enviar("ok")
+    user1.enviar("LogOk")
 else: 
     print("Continuara en modo anonimo")
     username=False
@@ -97,7 +97,9 @@ while resposta!=0:
     #forza and calidade are optional values so we need to indicate what "forza" is.Its confusing in this case cause they have the same name
 
     elif int(resposta) is constants.Train_Me:
+        user1.enviar("ok") #confirmamos que chegou a mensaxe
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
+        
         while index_golpe is False:#index_golpe
             index_golpe=user1.elexir_golpes_clasificados(GolpesClasificados,"Atras")#This function return False if an invalid number has been chosen
          #Atras is the message that appears in position "0"

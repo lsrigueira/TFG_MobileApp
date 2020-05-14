@@ -37,13 +37,13 @@ public abstract class Connection extends AsyncTask<String,String,String> {
     public static String receive(){
         String retorno = null;
         try{
-            System.out.println("Vamos a esperar");
+            System.out.println("Esperando input do socket....");
             retorno = Connection.in.readLine();
             //Thread.sleep(300);
         }catch (Exception e){
             e.printStackTrace();
         }
-        System.out.println("Retornamos");
+        System.out.println("Chegou: "+retorno);
         return retorno;
     }
 

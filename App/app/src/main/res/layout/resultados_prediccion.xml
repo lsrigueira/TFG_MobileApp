@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/left"
+        app:srcCompat="@drawable/left"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu"/>
+
+    <ImageView
+        android:id="@+id/up"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.4"
+        app:srcCompat="@drawable/up"
+        app:layout_constraintLeft_toRightOf="@id/left"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu" />
+
+    <ImageView
+        android:id="@+id/right"
+        app:srcCompat="@drawable/right"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintLeft_toRightOf="@id/up"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu" />
+
+
+
+
+    <Button
+        android:id="@+id/ToMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Continuar"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@drawable/back_gradient"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000000"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

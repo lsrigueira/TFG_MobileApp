@@ -67,8 +67,8 @@ class usuario:
                         valido=1
             except:
                 valido = 0
-        if self.remoto:
-            self.conn.send("ok\r\n".encode())
+        #if self.remoto:
+         #   self.conn.send("ok\r\n".encode())
         return devolver
 
 
