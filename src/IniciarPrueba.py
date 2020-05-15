@@ -97,7 +97,7 @@ while resposta!=0:
     #forza and calidade are optional values so we need to indicate what "forza" is.Its confusing in this case cause they have the same name
 
     elif int(resposta) is constants.Train_Me:
-        user1.enviar("ok") #confirmamos que chegou a mensaxe
+        user1.enviar("ok")      #confirmamos que chegou a mensaxe
         index_golpe = False     #One index to get the hit from GolpesClasificados(abrev already)
         
         while index_golpe is False:#index_golpe
@@ -112,12 +112,12 @@ while resposta!=0:
         while repetir:
            #Controlador.main()
            forza=function.readJSONS()[1]
-           if not user1.mydb.contains(hitname):
+           if (not user1.mydb.contains(hitname) or user1.remoto): 
                user1.enviar("clasificadores")   
                aux=function.calibrar(user1,user1.name,hitname,False)
                
-           else:
-               user1.enviar("resultado")
+           
+           user1.enviar("resultado")
            clasificador=user1.mydb.getclf(hitname)
            print(clasificador.clf)
            clf_real=clasificador.clf

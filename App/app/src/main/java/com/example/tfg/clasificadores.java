@@ -22,8 +22,10 @@ public class clasificadores extends AppCompatActivity {
             public void onClick(View v) {
                 Connection.send("1");
                 Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
-                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin(Recomendado)?\"");
-                myIntent.putExtra("nextscreen","resultados");
+                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin (Recomendado)?\"");
+                myIntent.putExtra("nextyes","resultados");
+                myIntent.putExtra("nextno","resultados");
+
                 startActivity(myIntent);
                 //recivir();
             }
@@ -33,8 +35,9 @@ public class clasificadores extends AppCompatActivity {
             public void onClick(View v) {
                 Connection.send("2");
                 Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
-                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin(Recomendado)?\"");
-                myIntent.putExtra("nextscreen","resultados");
+                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin (Recomendado)?\"");
+                myIntent.putExtra("nextyes","resultados");
+                myIntent.putExtra("nextno","resultados");
                 startActivity(myIntent);
                 //recivir();
             }

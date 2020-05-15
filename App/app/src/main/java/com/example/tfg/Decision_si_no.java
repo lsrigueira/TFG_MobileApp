@@ -17,7 +17,8 @@ public class Decision_si_no  extends AppCompatActivity {
 
         Bundle b = getIntent().getExtras();
         String textoaviso = b.getString("textoaviso");
-        final String nextScreen = b.getString("nextscreen");
+        final String netxYes = b.getString("nextyes");
+        final String nextNo = b.getString("nextno");
 
         Button NoBtn = findViewById(R.id.Decision_No);
         Button SiBtn = findViewById(R.id.Decision_Si);
@@ -27,7 +28,7 @@ public class Decision_si_no  extends AppCompatActivity {
         SiBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("1");
-                startActivity(getNetxScreen(nextScreen));
+                startActivity(getNetxScreen(netxYes));
                 //recivir();
             }
         });
@@ -35,23 +36,43 @@ public class Decision_si_no  extends AppCompatActivity {
         NoBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("2");
-                Intent myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
-                startActivity(myIntent);
+                startActivity(getNetxScreen(nextNo));
                 //recivir();
             }
         });
 
     }
 
-    public Intent getNetxScreen(String nextscreen){
+    public Intent getNetxScreen(String nextScreen){
 
         Intent myIntent = null;
-        switch (nextscreen){
+        switch (nextScreen){
             case "resultados":
+
                 myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
+                break;
+            case "MenuPrincipal":
+
+                System.out.println("Seleccionando ir ó menu principal");
+                myIntent = new Intent(getBaseContext(), MainActivity.class);
+                break;
         }
 
         return myIntent;
+    }
+
+    public void  recivir(){
+
+        final Thread receive = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String respuesta = Connection.receive();
+                System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                System.out.println(respuesta);
+                System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+            }
+        });
+        receive.start();
     }
 }
 
