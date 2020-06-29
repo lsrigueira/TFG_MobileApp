@@ -26,6 +26,22 @@ GolpesClasificados=[]
 resposta=123123
 hits_database=[[]]
 
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+#O mellor para o boton de "home" vai ser poñer un número a parte e non enseñar e listo
+
+
+"""
+1)Creamos un programilla nunha raspi e puenteamos con duckgo a Ip do noso router externo a un dns
+2)AutoSSH que lle dea a IP privada o noso server de duckDNS
+3)A nosa app conectase e o server devolvelle a privada.Teñen que estar na mesma subrede asíque 
+sabe quen é pola IP externa do router
+"""
 
 remoto = False
 if(int(input("\nDesexa executar o programa en remoto ou local(Defecto)\n\r1)Remoto\n\r2)Local")) == 1):
@@ -115,9 +131,6 @@ while resposta!=0:
            if (not user1.mydb.contains(hitname) or user1.remoto): 
                user1.enviar("clasificadores")   
                aux=function.calibrar(user1,user1.name,hitname,False)
-               
-           
-           user1.enviar("resultado")
            clasificador=user1.mydb.getclf(hitname)
            print(clasificador.clf)
            clf_real=clasificador.clf
@@ -145,9 +158,12 @@ while resposta!=0:
            mediahitname=function.mediapot(vectorhitname,historialhitname)
            mediaetiqueta=function.mediapot(vectoretiqueta,historialetiqueta)
            print("\n-------------------------Resultados-------------------------")
+           potenciagolpe = str(100*pot/mediahitname)
+           potenciagolpetag = str(100*pot/mediaetiqueta)
            print("O golpe con potencia "+str(pot)+" foi "+str(etiqueta))
-           print("\t"+str(100*pot/mediahitname)+"% de "+str(hitname[:-4]))
-           print("\t"+str(100*pot/mediaetiqueta)+"% de "+str(hitname[:-4])+" "+str(etiqueta))
+           print("\t"+potenciagolpe+"% de "+str(hitname[:-4]))
+           print("\t"+potenciagolpetag+"% de "+str(hitname[:-4])+" "+str(etiqueta))
+           user1.enviar(str(pot)+","+potenciagolpe+","+potenciagolpetag+","+str(hitname[:-4])+","+str(etiqueta))
            valido=user1.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
            if int(valido) is 2:
               repetir=False

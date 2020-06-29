@@ -29,7 +29,6 @@ public class Decision_si_no  extends AppCompatActivity {
             public void onClick(View v) {
                 Connection.send("1");
                 startActivity(getNetxScreen(netxYes));
-                //recivir();
             }
         });
 
@@ -37,7 +36,6 @@ public class Decision_si_no  extends AppCompatActivity {
             public void onClick(View v) {
                 Connection.send("2");
                 startActivity(getNetxScreen(nextNo));
-                //recivir();
             }
         });
 
@@ -59,20 +57,6 @@ public class Decision_si_no  extends AppCompatActivity {
         }
 
         return myIntent;
-    }
-
-    public void  recivir(){
-
-        final Thread receive = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String respuesta = Connection.receive();
-                System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                System.out.println(respuesta);
-                System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            }
-        });
-        receive.start();
     }
 }
 

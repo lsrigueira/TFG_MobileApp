@@ -6,11 +6,12 @@ import time
 class usuario:
     def __init__(self ,remoto = False):
         print("Novo usuario")
+        print(print([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1], [[(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) if l][0][0]))
         self.mydb = function.basededatos()
         self.filtro = "nada"
         self.remoto = remoto
         if remoto == True:
-            HOST = "192.168.0.4"
+            HOST = "192.168.0.5"
             PORT = 8888
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             print('Socket created')

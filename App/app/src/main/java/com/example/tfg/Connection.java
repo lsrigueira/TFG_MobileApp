@@ -22,7 +22,7 @@ public abstract class Connection extends AsyncTask<String,String,String> {
     public static void start(){
         try {
             System.out.println("EXECUTANDO ESTOOOOOOOOOOOO");
-            socket = new Socket(InetAddress.getByName("192.168.0.4"),8888);
+            socket = new Socket(InetAddress.getByName("192.168.0.5"),8888);
             Connection.out = new PrintWriter(socket.getOutputStream(), true);
             in =new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e1) {
