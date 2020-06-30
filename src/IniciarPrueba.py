@@ -163,7 +163,7 @@ while resposta!=0:
            print("O golpe con potencia "+str(pot)+" foi "+str(etiqueta))
            print("\t"+potenciagolpe+"% de "+str(hitname[:-4]))
            print("\t"+potenciagolpetag+"% de "+str(hitname[:-4])+" "+str(etiqueta))
-           user1.enviar(str(pot)+","+potenciagolpe+","+potenciagolpetag+","+str(hitname[:-4])+","+str(etiqueta))
+           user1.enviar(str(pot)+","+potenciagolpe[:6]+"%,"+potenciagolpetag[:6]+"%,"+str(etiqueta))
            valido=user1.eleccion("Desexa seguir clasificando?\n\t1)Si\n\t2)No",2,False)
            if int(valido) is 2:
               repetir=False
