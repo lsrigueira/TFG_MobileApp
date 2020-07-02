@@ -5,6 +5,7 @@
 
 #ESTE CODIGO "LIMITA" OS SENSORES XA QUE SOLLO COLLEMOS 10 MOSTRAS DOS JSONS(todas as que da coa configuracion actual)
 import constant
+import warnings
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +19,8 @@ from sklearn.model_selection import cross_validate
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 import xlsxwriter
 import pandas as pd
@@ -499,11 +502,11 @@ def string2float2D(vector):
 
 #AQUI MAIS FUNCIONS DE CALIBRAR PORQUE QUEREMOS CHEGAR o 90%
 def calibrar(usuario,sesion,hitname,verresult):
-    
+    warnings.filterwarnings('always')
     """
     Aqui ainda hai que tocar moito, non pode ser que este no mesmo lado os dous clasificadores
     """
-    resposta = int(usuario.eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search", 3, False))
+    resposta = int(usuario.eleccion("Elixa un clasificador dos que se ensinaron por pantalla\n\t\t1)LinearSVC + SelectFromModel\n\t\t2)LogisticRegression + Grid Search\n\t\t3)RandomForest\n\t\t4)KNN", 5, False))
     
     overfit=int(usuario.eleccion("Desexa eliminar o overfitting(recomendable)?\n\t\t1)Sin overfitting\n\t\t2)Con overfitting",2,False))
     overFitBool = False
@@ -587,7 +590,7 @@ def calibrar(usuario,sesion,hitname,verresult):
             print("Estaba na base de datos")
             usuario.mydb.updateClf(hitname, "LinearSVC", "nada",overFitBool,
                             linear, clf1, new_values_linear, labels)
-    else:
+    elif int(resposta) is 2:
         i=0
         k=[]
         values=auxvect[0:int(len(auxvect)/2)]
@@ -629,20 +632,67 @@ def calibrar(usuario,sesion,hitname,verresult):
             usuario.mydb.updateClf(hitname, "Logistic", usuario.filtro,overFitBool,
                             logistic, clf2, new_values_logistic, labels)
 
+    elif int(resposta) is 3:
+        i=0
+        k=[]
+        values=auxvect[0:int(len(auxvect)/2)]
+        clf3 = SelectFromModel(RandomForestClassifier().fit(values,labels), prefit=True)
+        new_values_forest=clf3.transform(values)
 
-    """
-    #New Code
-    #Necesitamos chamarlle igual a todas as variables,en principio o scope e o mismo asique
-    if verresult is True:
-        resp2 = int(eleccion(
-            "Desexa probar empiricamente a precision do clasificador?\n\t\t1)Si\n\t\t2)No", 2, False))
-
-    if resp2 is 2:
-        if overFitBool:
-            probarclf(new_values_linear,labels,linear)
+        while i < len(new_values_forest):
+            k.append(list(map(float,new_values_forest[i])))
+            i=i+1
+        new_values_forest=k
+        if overfit is 1:
+            randomForest = RandomForestClassifier(n_estimators=185).fit(new_values_forest,labels)
+            scores = cross_validate(randomForest, new_values_forest, labels, scoring=scoring, cv=10, return_train_score=False)
         else:
-            probarclf(new_values_linear,labels,linear)
-    """
+            randomForest = RandomForestClassifier(n_estimators=185).fit(values,labels)
+            scores = cross_validate(randomForest,reshapecasero(values), labels, scoring=scoring, cv=10, return_train_score=False)
+
+        if verresult is True:
+            print("--------------------------CROSSVALIDATE--------------------------")
+            print("Datos de RandomForest")
+            print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+            print("Score time " + str(sum(scores["score_time"]) / 10))
+            print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+            print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+            print("----------------------------------------------------------------")
+        if(not usuario.mydb.contains(hitname,"RandomForest","nada",overFitBool)):
+            print("Non estaba na base de datos")
+            print(usuario.mydb.clasificadores)
+            usuario.mydb.addClf(golpeX=hitname,tipoX="RandomForest",filtroX="nada",overfittingX=overFitBool ,clfX=randomForest,sel_atribX=clf3)
+        else:
+            print("Estaba na base de datos")
+            usuario.mydb.updateClf(hitname, "RandomForest", "nada",overFitBool,
+                            randomForest, clf3, new_values_linear, labels)
+    else:
+        print("KNN")
+        i = 0
+        k = []
+        values = auxvect[0:int(len(auxvect)/2)]
+        knn = KNeighborsClassifier(n_neighbors=3).fit(values,labels)
+        scores = cross_validate(knn,reshapecasero(values), labels, scoring=scoring, cv=10, return_train_score=False)
+
+        if verresult is True:
+            print("--------------------------CROSSVALIDATE--------------------------")
+            print("Datos de KNN")
+            print("Fit time: " + str(sum(scores["fit_time"]) / 10))
+            print("Score time " + str(sum(scores["score_time"]) / 10))
+            print("precision_micro"+ str(sum(scores["test_precision_micro"]) / 10)+" Importante se as mostras non estan balanceadas")
+            print("Accuracy: " + str(sum(scores["test_accuracy"]) / 10))
+            print("----------------------------------------------------------------")
+
+        if(not usuario.mydb.contains(hitname,"KNN","nada",overFitBool)):
+            print("Non estaba na base de datos")
+            print(usuario.mydb.clasificadores)
+            usuario.mydb.addClf(golpeX=hitname,tipoX="KNN",filtroX="nada",overfittingX=False ,clfX=knn,sel_atribX="null")
+        else:
+            print("Estaba na base de datos")
+            usuario.mydb.updateClf(hitname, "KNN", "nada",False,
+                            knn, "null", values, labels)
+
+
     if verresult is True:
         resp2 = int(usuario.eleccion(
             "Desexa probar empiricamente a precision do clasificador?\n\t\t1)Si\n\t\t2)No", 2, False))
@@ -684,6 +734,31 @@ def calibrar(usuario,sesion,hitname,verresult):
             if resp2 is 1:
                 probarclf(new_values_logistic, labels, logistic)
             return [logistic, "null"]
+    elif resposta is 3:
+        if overfit is 1:
+            if verresult is True:
+                print(
+                    "--------------Sin overfitting os resultados seran mellores--------------")
+            randomForest.fit(new_values_forest, labels)
+            if resp2 is 1:
+                probarclf(new_values_forest, labels, randomForest)
+            return [randomForest, clf3]
+        else:
+            if verresult is True:
+                print(
+                    "--------------Con overfitting esperanse peores resultados--------------")
+            randomForest.fit(values, labels)
+            if resp2 is 1:
+                probarclf(values, labels, randomForest)
+            return [randomForest, "null"]
+    else:
+        if verresult is True:
+            print(
+                "--------------Con overfitting esperanse peores resultados--------------")
+        knn.fit(values, labels)
+        if resp2 is 1:
+            probarclf(values, labels, knn)
+        return [knn, "null"]
 
 def probarclf(valuesparam,labelsparam,clf):
 
