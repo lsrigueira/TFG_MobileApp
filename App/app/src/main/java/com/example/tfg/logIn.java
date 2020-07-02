@@ -14,6 +14,8 @@ public class logIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+
+        defaultUser();
         Thread init = new Thread() {
             @Override
             public void run() {
@@ -34,11 +36,16 @@ public class logIn extends AppCompatActivity {
                 Connection.send("1");
 
                 Connection.send("pruebajavier");
+                usuario.setNome("pruebajavier");
                 recivir();
             }
         });
     }
 
+    public void defaultUser(){
+        usuario.setPitch(200);
+        usuario.setSpeed(200);
+    }
     public void  recivir(){
 
         final Thread receive = new Thread(new Runnable() {
