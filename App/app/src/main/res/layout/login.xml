@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id ="@+id/labeltext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:text="Usuario"
+        android:textSize="@android:dimen/app_icon_size"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+
+        ></TextView>
+
+    <EditText
+        android:id="@+id/plain_text_input"
+        app:layout_constraintTop_toBottomOf="@id/labeltext"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/inputbackfround"
+        android:inputType="text"/>
+
+    <TextView
+        android:id ="@+id/passtext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/plain_text_input"
+        android:layout_marginTop="60dp"
+        android:text="Contrasinal"
+        android:textSize="@android:dimen/app_icon_size"
+        android:textColor="#000000"
+        android:gravity="center_horizontal"
+
+        ></TextView>
+
+    <EditText
+        android:id="@+id/pass_text_input"
+        app:layout_constraintTop_toBottomOf="@id/passtext"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/inputbackfround"
+        android:inputType="text"/>
+
+    <Button
+        android:id="@+id/loginbtn"
+        app:layout_constraintTop_toBottomOf="@+id/pass_text_input"
+        android:layout_marginTop="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Log In"
+        android:textColor="#000000"
+        android:textSize="@android:dimen/app_icon_size" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

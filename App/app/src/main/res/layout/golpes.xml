@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back_gradient"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <RelativeLayout
+        android:id="@+id/GolpesTitle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_height="60dp"
+        android:layout_width="match_parent"
+
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Golpes"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="#FFD519"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/Crochet"
+        app:layout_constraintTop_toBottomOf="@+id/GolpesTitle"
+        android:layout_marginTop="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Crochet"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+
+    <Button
+        android:id="@+id/Patada"
+        app:layout_constraintTop_toBottomOf="@+id/Crochet"
+        android:layout_marginTop="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Patada"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/Goback"
+        app:layout_constraintTop_toBottomOf="@+id/Patada"
+        android:layout_marginTop="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Volver"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/potencia"
+        android:layout_width="210dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/potgolp"
+        app:layout_constraintLeft_toLeftOf="@+id/left"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potencia:"
+            android:textSize="50dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="210dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/potgolp"
+        app:layout_constraintLeft_toRightOf="@+id/potencia"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:id="@+id/potenciavalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XXXX"
+            android:textSize="45dp" />
+    </LinearLayout>
+
+
+
+
+
+    <LinearLayout
+        android:id="@+id/potgolp"
+        android:layout_width="210dp"
+        android:layout_height="140dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/pottag"
+        app:layout_constraintLeft_toLeftOf="@+id/left"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potencia golpe:"
+            android:textSize="50dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="210dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toTopOf ="@+id/potgolp"
+        app:layout_constraintLeft_toRightOf="@+id/potgolp"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:id="@+id/potgolpvalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XX.02%"
+            android:textSize="45dp" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/pottag"
+        android:layout_marginBottom="20dp"
+        android:layout_width="210dp"
+        android:layout_height="140dp"
+        app:layout_constraintBottom_toTopOf="@+id/left"
+        app:layout_constraintLeft_toLeftOf="@+id/left"
+        >
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Potencia tag"
+            app:layout_constraintBottom_toTopOf="@+id/left"
+            android:textSize="50dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="210dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toTopOf ="@+id/pottag"
+        app:layout_constraintLeft_toRightOf="@+id/pottag"
+        android:layout_marginLeft="10dp"
+        >
+        <TextView
+            android:id="@+id/pottagvalue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XX.02%"
+            android:textSize="45dp" />
+    </LinearLayout>
+
+
+
+
+    <ImageView
+        android:id="@+id/left"
+        app:srcCompat="@drawable/left"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu"/>
+
+    <ImageView
+        android:id="@+id/up"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.3"
+        app:srcCompat="@drawable/up"
+        app:layout_constraintLeft_toRightOf="@id/left"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu" />
+
+    <ImageView
+        android:id="@+id/right"
+        app:srcCompat="@drawable/right"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.33"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintLeft_toRightOf="@id/up"
+        app:layout_constraintBottom_toTopOf ="@id/ToMenu" />
+
+
+
+
+
+
+    <Button
+        android:id="@+id/ToMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Continuar"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:background="@drawable/back_gradient"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="#000000"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
