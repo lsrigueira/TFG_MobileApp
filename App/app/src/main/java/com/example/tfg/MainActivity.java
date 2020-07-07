@@ -16,7 +16,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
-      //private  Connection con = new Connection("192.168.0.4",8888);
+      // private  Connection con = new Connection("192.168.0.4",8888);
 
     Connection conn;
 
