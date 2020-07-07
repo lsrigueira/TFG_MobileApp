@@ -46,11 +46,17 @@ public class resultados_clasification extends  AppCompatActivity{
                         ((TextView)findViewById(R.id.fitTimeavalue)).setText(alldata[0]);
                         ((TextView)findViewById(R.id.ScoreTimeValue)).setText(alldata[1]);
                         ((TextView)findViewById(R.id.Accuracyvalue)).setText(alldata[2]);
+                        if (usuario.getAudioCommands()){
+                            usuario.speak("Fit taim . ."+alldata[0]+ ". . Escore Taim"+alldata[1]+". . Exactitud"+alldata[2]);
+                        }
                     }
                 });
             }
         });
         receive.start();
+
+
+
     }
 
 

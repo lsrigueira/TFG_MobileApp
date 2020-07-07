@@ -38,7 +38,10 @@ public class Decision_si_no  extends AppCompatActivity {
                 startActivity(getNetxScreen(nextNo));
             }
         });
-
+        if (usuario.getAudioCommands()){
+            usuario.speak(textoaviso);
+            usuario.speak("1 si . . 2 no");
+        }
     }
 
     public Intent getNetxScreen(String nextScreen){

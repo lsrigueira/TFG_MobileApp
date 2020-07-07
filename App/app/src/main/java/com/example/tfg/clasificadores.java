@@ -27,6 +27,10 @@ public class clasificadores extends AppCompatActivity {
         myIntent.putExtra("nextno","resultados");
         myIntent.putExtra("tipoResultado",b.getString("tipoResultado"));
 
+        if (usuario.getAudioCommands()){
+            usuario.speak("1 Linear . . 2 Regresor Logistico . . 3 Random forest . . 4 CA ene ene");
+        }
+
         linearBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("1");

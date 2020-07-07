@@ -59,6 +59,9 @@ public class resultados_prediccion extends AppCompatActivity {
                         ((TextView)findViewById(R.id.potenciavalue)).setText(alldata[0]);
                         ((TextView)findViewById(R.id.potgolpvalue)).setText(alldata[1]);
                         ((TextView)findViewById(R.id.pottagvalue)).setText(alldata[2]);
+                        if(usuario.getAudioCommands()){
+                            usuario.speak("Potencia Bruta . . "+alldata[0]+". . .Portentage de potencia segun el golpe . ."+alldata[1]+". . . Porcentage de potencia segun la etiqueta . ."+alldata[2]);
+                        }
                     }
                 });
                 if(alldata[alldata.length-1].equals("Esquerda")){

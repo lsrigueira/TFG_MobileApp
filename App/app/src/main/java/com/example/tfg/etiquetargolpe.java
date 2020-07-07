@@ -26,7 +26,13 @@ public class etiquetargolpe extends AppCompatActivity {
         myIntent.putExtra("nextno","MenuPrincipal");
         myIntent.putExtra("contextoetiquetar",b.getString("golpe"));
 
-
+        if(usuario.getAudioCommands()){
+            if (!b.getString("golpe").equals("patada")){
+                usuario.speak("¿Como fue el golpe? . . . 1 derecha . . 2 izquierda . . 3 frontal");
+            }else{
+                usuario.speak("¿Como fue el golpe? . . . 1 derecha . . 2 izquierda");
+            }
+        }
         if (!b.getString("golpe").equals("patada")){
             frontal.setText("No disponible");
             frontal.setEnabled(false);

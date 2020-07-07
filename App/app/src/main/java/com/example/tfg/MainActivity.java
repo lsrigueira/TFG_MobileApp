@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        usuario.inicializar(this);
         setContentView(R.layout.activity_main);
         Button trainAlgorithm = findViewById(R.id.Train_algorithm);
         Button TSNEBtn = findViewById(R.id.TSNE);
@@ -36,6 +36,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Connection.send("1");
                 recivir("TrainAlgorithm");
+            }
+        });
+
+        logOutBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                System.exit(0);
+            }
+        });
+
+        TSNEBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                usuario.setSpeed(2);
+                usuario.speak("COME ON");
             }
         });
 
@@ -128,6 +141,11 @@ public class MainActivity extends AppCompatActivity {
                 return ;
             }
         });
+
+
         receive.start();
     }
+
+
+
 }

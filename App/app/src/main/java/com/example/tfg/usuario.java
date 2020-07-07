@@ -1,5 +1,6 @@
 package com.example.tfg;
 
+import android.content.Context;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ public class usuario {
     private static float speed;
     private static String nombre;
     private static Boolean audioCommands;
+    private static TextToSpeech mTTS;
 
     public static void setPitch(float pitch){
         usuario.pitch = pitch;
@@ -27,7 +29,7 @@ public class usuario {
     public static void setNome(String nombre){
         usuario.nombre = nombre;
     }
-    public static void setGetVoz(Boolean voz){
+    public static void setAudioCommands(Boolean voz){
         usuario.audioCommands = voz;
     }
 
@@ -45,6 +47,30 @@ public class usuario {
 
     public static float getSpeed(){
         return usuario.speed;
+    }
+
+    public static void inicializar(Context contexto){
+        mTTS = new TextToSpeech(contexto, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                        Locale locSpanish = new Locale("spa", "ESP");
+                    int result = mTTS.setLanguage(locSpanish);
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                } else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
+    }
+
+    public static void speak(String text) {
+        mTTS.setPitch(pitch);
+        mTTS.setSpeechRate(speed);
+        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
 }

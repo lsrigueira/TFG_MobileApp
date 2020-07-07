@@ -24,6 +24,10 @@ public class golpes extends AppCompatActivity {
         Button crochetbtn = findViewById(R.id.Crochet);
         Button patadabtn = findViewById(R.id.Patada);
 
+        if (usuario.getAudioCommands()){
+            usuario.speak("Seleccione el golpe . . 1 Crochet . . 2 patada");
+        }
+
             crochetbtn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Connection.send("1");

@@ -43,8 +43,9 @@ public class logIn extends AppCompatActivity {
     }
 
     public void defaultUser(){
-        usuario.setPitch(200);
-        usuario.setSpeed(200);
+        usuario.setPitch(1);
+        usuario.setSpeed(1);
+        usuario.setAudioCommands(true);
     }
     public void  recivir(){
 
