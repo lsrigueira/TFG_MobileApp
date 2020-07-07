@@ -16,7 +16,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 1000;
-      // private  Connection con = new Connection("192.168.0.4",8888);
+      //private  Connection con = new Connection("192.168.0.4",8888);
 
     Connection conn;
 
@@ -25,12 +25,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        Button trainAlgorithm = findViewById(R.id.Train_algorithm);
         Button TSNEBtn = findViewById(R.id.TSNE);
         Button TrainMeBtn = findViewById(R.id.Train_myself);
         Button historialBtn = findViewById(R.id.Historial);
         Button clasifiersBtn = findViewById(R.id.Clasificadores);
         Button logOutBtn = findViewById(R.id.LogOut);
 
+        trainAlgorithm.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Connection.send("1");
+                recivir("TrainAlgorithm");
+            }
+        });
 
         TrainMeBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -51,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 probar();
             }
         });
-
-
-
     }
 
     public void probar(){
@@ -95,8 +99,22 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Intent myIntent = null;
                 switch (GoTo.toLowerCase()){
+                    case "TrainAlgorithm": //same as clasificadores
+                        System.out.println("NEXT SCREEN GOLPES");
+                        myIntent = new Intent(getBaseContext(),   golpes.class);
+                        break;
                     case "trainme":
-                    case "clasificadores":
+                        myIntent = new Intent(getBaseContext(),   golpes.class);
+                        myIntent.putExtra("tipoResultado","prediccion");
+
+                        break;
+                    case "Clasificadores":
+                        System.out.println("OLAAA");
+                        myIntent = new Intent(getBaseContext(),   golpes.class);
+                        myIntent.putExtra("tipoResultado","clasificacion");
+                        break;
+                    default:
+                        System.out.println("NEXT SCREEN golpes");
                         myIntent = new Intent(getBaseContext(),   golpes.class);
                         break;
 

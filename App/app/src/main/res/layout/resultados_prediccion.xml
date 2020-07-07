@@ -38,9 +38,6 @@
     </LinearLayout>
 
 
-
-
-
     <LinearLayout
         android:id="@+id/potgolp"
         android:layout_width="210dp"
@@ -104,9 +101,6 @@
             android:text="XX.02%"
             android:textSize="45dp" />
     </LinearLayout>
-
-
-
 
     <ImageView
         android:id="@+id/left"

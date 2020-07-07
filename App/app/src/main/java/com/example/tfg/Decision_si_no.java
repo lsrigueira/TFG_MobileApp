@@ -44,10 +44,26 @@ public class Decision_si_no  extends AppCompatActivity {
     public Intent getNetxScreen(String nextScreen){
 
         Intent myIntent = null;
+        Bundle b = getIntent().getExtras();
+        String tiporesult = b.getString("tipoResultado");
         switch (nextScreen){
+            case "etiquetar":
+                myIntent = new Intent(getBaseContext(),   etiquetargolpe.class);
+                myIntent.putExtra("golpe",b.getString("contextoetiquetar"));
+                break;
+            case "clasificadores":
+                myIntent = new Intent(getBaseContext(), clasificadores.class);
+                myIntent.putExtra("tipoResultado",tiporesult);
+                break;
+
             case "resultados":
 
-                myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
+                if (tiporesult.equals("clasificacion")){
+                    myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
+                }else{
+                    myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
+                }
+                myIntent.putExtra("tipoResultado",tiporesult);
                 break;
             case "MenuPrincipal":
 
@@ -58,5 +74,7 @@ public class Decision_si_no  extends AppCompatActivity {
 
         return myIntent;
     }
+
+
 }
 

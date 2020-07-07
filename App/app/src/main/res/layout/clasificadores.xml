@@ -33,7 +33,7 @@
     <Button
         android:id="@+id/LinearSVC"
         app:layout_constraintTop_toBottomOf="@+id/ClasificadoresTitle"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:background="@drawable/menu_button"
         android:layout_width="fill_parent"
@@ -47,7 +47,7 @@
     <Button
         android:id="@+id/Logigistic"
         app:layout_constraintTop_toBottomOf="@+id/LinearSVC"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:background="@drawable/menu_button"
         android:layout_width="fill_parent"
@@ -58,15 +58,28 @@
         android:textSize="22sp" />
 
     <Button
-        android:id="@+id/Goback"
+        android:id="@+id/RandomForest"
         app:layout_constraintTop_toBottomOf="@+id/Logigistic"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:background="@drawable/menu_button"
         android:layout_width="fill_parent"
         android:layout_height="95dp"
         android:gravity="center_horizontal|center_vertical"
-        android:text="Volver"
+        android:text="Random Forest"
+        android:textColor="#FFD519"
+        android:textSize="22sp" />
+
+    <Button
+        android:id="@+id/KNN"
+        app:layout_constraintTop_toBottomOf="@+id/RandomForest"
+        android:layout_marginTop="60dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:background="@drawable/menu_button"
+        android:layout_width="fill_parent"
+        android:layout_height="95dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="KNN"
         android:textColor="#FFD519"
         android:textSize="22sp" />
 
