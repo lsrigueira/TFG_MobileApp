@@ -16,30 +16,42 @@ public class clasificadores extends AppCompatActivity {
 
         Button linearBtn = findViewById(R.id.LinearSVC);
         Button logisticBtn = findViewById(R.id.Logigistic);
+        Button rfbutton = findViewById(R.id.RandomForest);
+        Button knnbutton = findViewById(R.id.KNN);
 
+        final Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
+
+        myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin (Recomendado)?\"");
+        Bundle b = getIntent().getExtras();
+        myIntent.putExtra("nextyes","resultados");
+        myIntent.putExtra("nextno","resultados");
+        myIntent.putExtra("tipoResultado",b.getString("tipoResultado"));
 
         linearBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("1");
-                Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
-                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin (Recomendado)?\"");
-                myIntent.putExtra("nextyes","resultados");
-                myIntent.putExtra("nextno","resultados");
-
                 startActivity(myIntent);
-                //recivir();
             }
         });
 
         logisticBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Connection.send("2");
-                Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
-                myIntent.putExtra("textoaviso","\"Desexa eliminar o Overfittin (Recomendado)?\"");
-                myIntent.putExtra("nextyes","resultados");
-                myIntent.putExtra("nextno","resultados");
                 startActivity(myIntent);
-                //recivir();
+            }
+        });
+
+        rfbutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Connection.send("3");
+                startActivity(myIntent);
+            }
+        });
+
+        knnbutton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Connection.send("4");
+                startActivity(myIntent);
             }
         });
 

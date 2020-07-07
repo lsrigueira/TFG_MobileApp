@@ -9,11 +9,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class golpes extends AppCompatActivity {
 
+    Bundle b;
+    String tiporesult;
         @Override
         protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.golpes);
-
+        b = getIntent().getExtras();
+        tiporesult= b.getString("tipoResultado");
+        System.out.println(tiporesult);
+        System.out.println(tiporesult);
+        System.out.println(tiporesult);
+        System.out.println(tiporesult);
         Button backbtn = findViewById(R.id.Goback);
         Button crochetbtn = findViewById(R.id.Crochet);
         Button patadabtn = findViewById(R.id.Patada);
@@ -50,6 +57,14 @@ public class golpes extends AppCompatActivity {
                 String respuesta = Connection.receive();
                 Intent myIntent = null;
                 switch (respuesta.toLowerCase()){
+                    case "etiquetar-crochet":
+                        myIntent = new Intent(getBaseContext(), etiquetargolpe.class);
+                        myIntent.putExtra("golpe","crochet");
+                        break;
+                    case "etiquetar-patada":
+                        myIntent = new Intent(getBaseContext(), etiquetargolpe.class);
+                        myIntent.putExtra("golpe","patada");
+                        break;
                     case "back":
                         myIntent = new Intent(getBaseContext(),   MainActivity.class);
                         break;
@@ -58,6 +73,7 @@ public class golpes extends AppCompatActivity {
                         break;
                     case "clasificadores":
                         myIntent = new Intent(getBaseContext(),   clasificadores.class);
+                        myIntent.putExtra("tipoResultado",tiporesult);
                         break;
 
                 }

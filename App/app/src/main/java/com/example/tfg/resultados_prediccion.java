@@ -25,8 +25,9 @@ public class resultados_prediccion extends AppCompatActivity {
         Tomenu.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent myIntent = new Intent(getBaseContext(),   Decision_si_no.class);
-                myIntent.putExtra("textoaviso","Desexa volver a golpear ?");
-                myIntent.putExtra("nextyes","resultados");
+                myIntent.putExtra("textoaviso","Desexa seguir clasificando ?");
+                myIntent.putExtra("nextyes","clasificadores");
+                myIntent.putExtra("tipoResultado","prediccion");
                 myIntent.putExtra("nextno","MenuPrincipal");
                 startActivity(myIntent);
                 //r
@@ -42,7 +43,13 @@ public class resultados_prediccion extends AppCompatActivity {
             @Override
             public void run() {
                 String respuesta = Connection.receive();
-                System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+                System.out.println("************NEW VALUE*****************");
+                System.out.println(respuesta);
+                //This is just to synchronize
+                if (respuesta.equals("clasificadores")){
+                    respuesta = Connection.receive();
+                }
+                System.out.println("***********END VALUE******************");
                 //Potencia, PorcentaxeGolpe, Porcentaxe etiqueta, etiqueta
                 final String[] alldata = respuesta.split(",");
                 System.out.println(alldata[alldata.length-1]);
