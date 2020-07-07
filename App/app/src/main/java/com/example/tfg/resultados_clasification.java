@@ -15,9 +15,9 @@ public class resultados_clasification extends  AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.resultados_prediccion);
+        setContentView(R.layout.resultado_clasification);
         //PETA PORQUE ME DA ESTO COMO NULL
-        Button Tomenu = findViewById(R.id.ToMenuclass);
+        Button Tomenu = findViewById(R.id.ToMenufromClasificacion);
         recivir();
 
         Tomenu.setOnClickListener(new View.OnClickListener() {

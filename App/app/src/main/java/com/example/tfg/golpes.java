@@ -9,13 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class golpes extends AppCompatActivity {
 
-    Bundle b;
     String tiporesult;
         @Override
         protected void onCreate (Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.golpes);
-        b = getIntent().getExtras();
+        Bundle b = getIntent().getExtras();
         tiporesult= b.getString("tipoResultado");
         System.out.println(tiporesult);
         System.out.println(tiporesult);

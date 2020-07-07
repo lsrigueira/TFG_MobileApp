@@ -59,7 +59,7 @@ public class Decision_si_no  extends AppCompatActivity {
             case "resultados":
 
                 if (tiporesult.equals("clasificacion")){
-                    myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
+                    myIntent = new Intent(getBaseContext(),   resultados_clasification.class);
                 }else{
                     myIntent = new Intent(getBaseContext(),   resultados_prediccion.class);
                 }

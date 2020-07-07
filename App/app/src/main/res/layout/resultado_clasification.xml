@@ -26,7 +26,7 @@
     <LinearLayout
         android:id="@+id/ScoreTime"
         android:layout_width="210dp"
-        android:layout_height="70dp"
+        android:layout_height="120dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="80dp"
         app:layout_constraintTop_toBottomOf="@+id/FitTime"
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ScoreTime:"
+            android:text="Score Time:"
             android:textSize="50dp" />
     </LinearLayout>
 
@@ -76,6 +76,7 @@
     <LinearLayout
         android:layout_width="210dp"
         android:layout_height="70dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintTop_toTopOf="@id/ScoreTime"
         app:layout_constraintLeft_toRightOf="@+id/ScoreTime"
@@ -107,7 +108,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/ToMenuclass"
+        android:id="@+id/ToMenufromClasificacion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"

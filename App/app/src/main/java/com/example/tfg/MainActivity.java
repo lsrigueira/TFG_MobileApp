@@ -99,16 +99,17 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Intent myIntent = null;
                 switch (GoTo.toLowerCase()){
-                    case "TrainAlgorithm": //same as clasificadores
+                    case "trainalgorithm": //same as clasificadores
                         System.out.println("NEXT SCREEN GOLPES");
                         myIntent = new Intent(getBaseContext(),   golpes.class);
+                        myIntent.putExtra("tipoResultado","trainAlgorithm");
                         break;
                     case "trainme":
                         myIntent = new Intent(getBaseContext(),   golpes.class);
                         myIntent.putExtra("tipoResultado","prediccion");
 
                         break;
-                    case "Clasificadores":
+                    case "clasificadores":
                         System.out.println("OLAAA");
                         myIntent = new Intent(getBaseContext(),   golpes.class);
                         myIntent.putExtra("tipoResultado","clasificacion");
