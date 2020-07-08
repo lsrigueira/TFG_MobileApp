@@ -1,14 +1,24 @@
 package com.example.tfg;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
 import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
+import static androidx.core.app.ActivityCompat.startActivityForResult;
 
 public class usuario {
 
@@ -17,7 +27,7 @@ public class usuario {
     private static String nombre;
     private static Boolean audioCommands;
     private static TextToSpeech mTTS;
-
+    private static Handler mHandler = new Handler();
     public static void setPitch(float pitch){
         usuario.pitch = pitch;
     }
@@ -71,6 +81,12 @@ public class usuario {
         mTTS.setPitch(pitch);
         mTTS.setSpeechRate(speed);
         mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               return;
+            }
+        }, 20000);
     }
 
 }
