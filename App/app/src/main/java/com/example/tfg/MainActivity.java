@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         historialBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                listen();
+                Connection.send("3");
+                recivir("historial");
             }
         });
     }
@@ -122,7 +123,9 @@ public class MainActivity extends AppCompatActivity {
                     case "trainme":
                         myIntent = new Intent(getBaseContext(),   golpes.class);
                         myIntent.putExtra("tipoResultado","prediccion");
-
+                        break;
+                    case "historial":
+                        myIntent = new Intent(getBaseContext(),   historial.class);
                         break;
                     case "clasificadores":
                         System.out.println("OLAAA");

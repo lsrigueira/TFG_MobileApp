@@ -18,6 +18,7 @@
         <activity android:name=".resultados_clasification"/>
         <activity android:name=".clasificadores"/>
         <activity android:name=".etiquetargolpe"/>
+        <activity android:name=".historial"/>
         <activity android:name=".Decision_si_no"/>
         <activity android:name=".logIn">
             <intent-filter>

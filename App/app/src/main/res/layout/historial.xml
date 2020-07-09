@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <WebView
+        android:id="@+id/webview"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ToMenufromHistorial" />
+
+
+
+    <Button
+    android:id="@+id/ToMenufromHistorial"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+    android:layout_weight="1"
+    android:text="Continuar"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:background="@drawable/back_gradient"
+    android:textAlignment="center"
+    android:textAllCaps="true"
+    android:textColor="#000000"
+    android:textSize="48sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toBottomOf="parent"/>
+    
+</RelativeLayout>
