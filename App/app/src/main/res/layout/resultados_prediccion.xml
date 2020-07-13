@@ -132,11 +132,6 @@
         app:layout_constraintLeft_toRightOf="@id/up"
         app:layout_constraintBottom_toTopOf ="@id/ToMenu" />
 
-
-
-
-
-
     <Button
         android:id="@+id/ToMenu"
         android:layout_width="match_parent"
@@ -152,9 +147,5 @@
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

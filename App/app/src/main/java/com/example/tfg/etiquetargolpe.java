@@ -49,7 +49,7 @@ public class etiquetargolpe extends AppCompatActivity {
             },6000);;
         }
         if (!b.getString("golpe").equals("patada")){
-            frontal.setText("No disponible");
+            frontal.setText("No disponible para el cluster elegido");
             frontal.setEnabled(false);
         }
         derecha.setOnClickListener(new View.OnClickListener() {

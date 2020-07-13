@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
                 recivir("TrainAlgorithm");
             }
         });
+
+
 
         logOutBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -74,39 +74,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void listen(){
-        //private TextToSpeech mtts = new TextToSpeech();
-        //mtts.set
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Welcome to the TFG App");
-        //Discovery service = new Discovery("2020-05-03");
-        try{
-            startActivityForResult(intent,REQUEST_CODE_SPEECH_INPUT);
-        }catch (Exception e){
-            Toast.makeText(this,""+e.getMessage(),Toast.LENGTH_SHORT).show();
-        }
+    public void gosettings(View view){
+        Intent myintent = new Intent(getBaseContext(), settings.class);
+        startActivity(myintent);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("RESULT RESULT RESULT");
-        switch (requestCode){
-            case REQUEST_CODE_SPEECH_INPUT:{
-                if(resultCode == RESULT_OK && null!=data){
-                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    System.out.println(result.get(0));
-                    if(result.get(0).toLowerCase().equals("dos")){
-                        Connection.send("2");
-                        recivir("TrainMe");
-                    }
-                }
-            }
-        }
-    }
-
 
     public void  recivir(final String GoTo){
 
@@ -136,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("NEXT SCREEN golpes");
                         myIntent = new Intent(getBaseContext(),   golpes.class);
                         break;
-
                 }
                 String respuesta = Connection.receive();
                 if(respuesta.equals("ok")) {

@@ -19,6 +19,7 @@
         <activity android:name=".clasificadores"/>
         <activity android:name=".etiquetargolpe"/>
         <activity android:name=".historial"/>
+        <activity android:name=".settings"/>
         <activity android:name=".Decision_si_no"/>
         <activity android:name=".logIn">
             <intent-filter>
