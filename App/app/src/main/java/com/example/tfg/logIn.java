@@ -16,17 +16,7 @@ public class logIn extends AppCompatActivity {
 
 
         defaultUser();
-        Thread init = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Connection.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        init.start();
+        Connection.connectBD(this);
 
         Button ToMyUser = findViewById(R.id.loginbtn);
         ToMyUser.setOnClickListener(new View.OnClickListener() {
